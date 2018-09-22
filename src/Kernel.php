@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
@@ -48,6 +49,8 @@ class Kernel extends BaseKernel
         $loader->load($confDir.'/{packages}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
+
+        $this->configMaximus($container);
     }
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
@@ -57,5 +60,19 @@ class Kernel extends BaseKernel
         $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
         $routes->import($confDir.'/{routes}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, '/', 'glob');
         $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
+    }
+
+    private function configMaximus(ContainerBuilder $container)
+    {
+        $filePath = $this->getProjectDir() . '/maximus.json';
+
+        $definition = new Definition(Configuration::class, [$filePath]);
+        $definition->setPublic(true);
+
+        $container->setDefinition(Configuration::class, $definition);
+
+        $config = new Configuration($filePath);
+
+        $container->setParameter('maximus.theme', $config->get('theme', 'default'));
     }
 }
