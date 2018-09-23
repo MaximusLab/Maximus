@@ -11,6 +11,7 @@
 ###< symfony/web-server-bundle ###
 
 ###> maximus ###
+/config/packages/maximus.yaml
 /public/theme
 /themes
 ###< maximus ###
