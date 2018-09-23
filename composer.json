@@ -15,6 +15,7 @@
         "symfony/yaml": "*"
     },
     "require-dev": {
+        "composer/composer": "^1.7",
         "symfony/dotenv": "*",
         "symfony/profiler-pack": "^1.0",
         "symfony/web-server-bundle": "*"
@@ -44,10 +45,19 @@
         "symfony/polyfill-php56": "*"
     },
     "scripts": {
+        "maximus-scripts": [
+            "Maximus\\Composer\\ScriptHandler::copyConfiguration"
+        ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
+        "pre-install-cmd": [
+            "@maximus-scripts"
+        ],
+        "pre-update-cmd": [
+            "@maximus-scripts"
+        ],
         "post-install-cmd": [
             "@auto-scripts"
         ],
