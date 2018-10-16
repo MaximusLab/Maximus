@@ -33,7 +33,7 @@ services:
         class: Maximus\Asset\VersionStrategy\MaximusVersionStrategy
         arguments:
             - '%maximus.theme%'
-            - '%kernel.project_dir%/var/installed_themes/%maximus.theme%'
+            - '%maximus.theme_version%'
 
     Maximus\Twig\Extension\GoogleAnalyticsExtension:
         class: Maximus\Twig\Extension\GoogleAnalyticsExtension
