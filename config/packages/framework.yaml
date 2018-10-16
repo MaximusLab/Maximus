@@ -31,3 +31,4 @@ framework:
 
     assets:
         version_strategy: 'Maximus\Asset\VersionStrategy\MaximusVersionStrategy'
+        base_path: 'theme/%maximus.theme%'
