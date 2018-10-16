@@ -1,2 +1,10 @@
 parameters:
     maximus.theme: default
+    maximus.theme_variables: ~
+
+    maximus.ga_tracking:
+        id: ~
+        scripts: ~
+
+    maximus.disqus:
+        short_name: ~
