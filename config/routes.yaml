@@ -1,3 +1,7 @@
 #index:
 #    path: /
 #    controller: Maximus\Controller\DefaultController::index
+
+custom_page:
+    path: /{viewName}
+    controller: Maximus\Controller\CustomPageController::pageAction
