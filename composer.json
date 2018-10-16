@@ -12,11 +12,13 @@
         "symfony/console": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
+        "symfony/orm-pack": "^1.0",
         "symfony/yaml": "*"
     },
     "require-dev": {
         "composer/composer": "^1.7",
         "symfony/dotenv": "*",
+        "symfony/maker-bundle": "^1.8",
         "symfony/profiler-pack": "^1.0",
         "symfony/web-server-bundle": "*"
     },
