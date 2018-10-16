@@ -34,3 +34,13 @@ services:
         arguments:
             - '%maximus.theme%'
             - '%kernel.project_dir%/var/installed_themes/%maximus.theme%'
+
+    Maximus\Twig\Extension\GoogleAnalyticsExtension:
+        class: Maximus\Twig\Extension\GoogleAnalyticsExtension
+        arguments:
+            - '%maximus.ga_tracking%'
+
+    Maximus\Twig\Extension\DisqusExtension:
+        class: Maximus\Twig\Extension\DisqusExtension
+        arguments:
+        - '%maximus.disqus%'
