@@ -65,7 +65,7 @@ class Kernel extends BaseKernel
     private function configMaximus(ContainerBuilder $container)
     {
         $filePath = sprintf(
-            '%s/var/installed_themes/%s/theme.json',
+            '%s/themes_installed/%s/theme.json',
             $this->getProjectDir(),
             $container->getParameter('maximus.theme')
         );
