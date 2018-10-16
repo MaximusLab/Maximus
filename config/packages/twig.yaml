@@ -4,4 +4,9 @@ twig:
     strict_variables: '%kernel.debug%'
 
     paths:
+        '%kernel.project_dir%/themes_custom/%maximus.theme%': theme
         '%kernel.project_dir%/themes/%maximus.theme%': theme
+
+    globals:
+        theme: '%maximus.theme_variables%'
+        menu: '%maximus.menu%'
