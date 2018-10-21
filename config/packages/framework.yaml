@@ -30,5 +30,7 @@ framework:
         #app: cache.adapter.apcu
 
     assets:
-        version_strategy: 'Maximus\Asset\VersionStrategy\MaximusVersionStrategy'
-        base_path: 'theme/%maximus.theme%'
+        packages:
+            theme:
+                base_path: 'theme/%maximus.theme%'
+                version_strategy: 'Maximus\Asset\VersionStrategy\MaximusVersionStrategy'
