@@ -45,3 +45,14 @@ services:
         class: Maximus\Twig\Extension\DisqusExtension
         arguments:
         - '%maximus.disqus%'
+
+    maximus.menu_builder:
+        class: Maximus\Menu\Builder
+        arguments: ['@knp_menu.factory']
+
+    maximus.menu.console_menu:
+        class: Knp\Menu\MenuItem
+        factory: ['@maximus.menu_builder', 'consoleMenu']
+        tags:
+            - { name: knp_menu.menu, alias: console_menu }
+

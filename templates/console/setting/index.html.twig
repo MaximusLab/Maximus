@@ -1,0 +1,21 @@
+{% extends 'console/base.html.twig' %}
+{% form_theme form _self %}
+
+{% block form_label_class -%}
+col-sm-3
+{%- endblock form_label_class %}
+{% block form_group_class -%}
+col-sm-9
+{%- endblock form_group_class %}
+
+{% block body %}
+    <h1>Settings</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+
+        <div class="pt-3">
+            <button class="btn btn-primary btn-block">Submit</button>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}
