@@ -11,6 +11,8 @@
 namespace Maximus\Controller\Console;
 
 use Maximus\Form\Type\SettingsType;
+use Maximus\Session\Flash;
+use Maximus\Twig\Breadcrumb;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,13 +26,14 @@ class SettingController extends AbstractController
      * @Route("/", name="index")
      *
      * @param Request $request
+     * @param Breadcrumb $breadcrumb
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, Breadcrumb $breadcrumb)
     {
         $settingsRepo = $this->getDoctrine()->getRepository('Maximus:Setting');
         $settings = $settingsRepo->getSettings();
@@ -42,11 +45,19 @@ class SettingController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $settingsRepo->saveSettings($settings);
 
+                $this->addFlash(Flash::SUCCESS, 'Update settings successfully!');
+
                 return $this->redirectToRoute('console_setting_index');
             }
         }
 
+        $breadcrumb
+            ->add('Home', $this->generateUrl('console_index'))
+            ->add('Settings', $this->generateUrl('console_setting_index'), true)
+        ;
+
         $viewData = [
+            'breadcrumb' => $breadcrumb,
             'form' => $form->createView(),
         ];
 
