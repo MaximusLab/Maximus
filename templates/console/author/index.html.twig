@@ -1,5 +1,24 @@
 {% extends 'console/base.html.twig' %}
 
 {% block body %}
-    <h1>Author</h1>
+    <p>
+        <a href="{{ path('console_author_create') }}" class="btn btn-success">Create</a>
+    </p>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Operation</th>
+        </tr>
+        {% for author in authors %}
+            <tr>
+                <td>{{ author.id }}</td>
+                <td>{{ author.name }}</td>
+                <td>
+                    <a href="{{ path('console_author_edit', {'id': author.id}) }}" class="btn btn-primary">Edit</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
