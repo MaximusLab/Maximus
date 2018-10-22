@@ -12,6 +12,9 @@
             #breadcrumb-container {
                 background-color: #e9ecef;
             }
+            #alerts > div:first-child {
+                margin-top: 1em;
+            }
         </style>
         {% block stylesheets %}{% endblock %}
     </head>
@@ -53,6 +56,10 @@
         {% endif %}
 
         <div class="container">
+            {% block flash_messages %}
+                {% include 'console/flash_messages.html.twig' %}
+            {% endblock flash_messages %}
+
             {% block body %}{% endblock %}
         </div>
 

@@ -1,0 +1,17 @@
+<div id="alerts">
+{% for message in app.flashes(constant('Maximus\\Session\\Flash::ERROR')) %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes(constant('Maximus\\Session\\Flash::WARNING')) %}
+    <div class="alert alert-warning" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes(constant('Maximus\\Session\\Flash::SUCCESS')) %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+</div>
