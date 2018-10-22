@@ -23,7 +23,7 @@ class ArticleController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/{year}/{month}/{day}/{title}", name="article")
+     * @Route("/{year}/{month}/{day}/{title}", name="article", requirements={"year":"\d{4}", "month":"\d{2}", "day":"\d{2}"})
      */
     public function indexAction($year, $month, $day, $title)
     {
