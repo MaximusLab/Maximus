@@ -56,3 +56,6 @@ services:
         tags:
             - { name: knp_menu.menu, alias: console_menu }
 
+    Maximus\Twig\Breadcrumb:
+        class: Maximus\Twig\Breadcrumb
+        shared: false
