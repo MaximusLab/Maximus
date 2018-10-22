@@ -8,6 +8,11 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <style type="text/css">
+            #breadcrumb-container {
+                background-color: #e9ecef;
+            }
+        </style>
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
@@ -30,6 +35,22 @@
                 </div>
             </div>
         </nav>
+
+        {% if breadcrumb is defined %}
+        <nav aria-label="breadcrumb" id="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                {% for item in breadcrumb.all %}
+                    <li class="breadcrumb-item {{ item.active ? 'active' : '' }}">
+                        {% if item.link is not empty %}<a href="{{ item.link }}">{% endif %}
+                            {{ item.title }}
+                        {% if item.link is not empty %}</a>{% endif %}
+                    </li>
+                {% endfor %}
+                </ol>
+            </div>
+        </nav>
+        {% endif %}
 
         <div class="container">
             {% block body %}{% endblock %}
