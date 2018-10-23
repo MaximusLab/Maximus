@@ -8,6 +8,7 @@
         "ext-json": "*",
         "doctrine/annotations": "^1.6",
         "knplabs/knp-menu-bundle": "^2.0",
+        "michelf/php-markdown": "^1.8",
         "nadialabs/paginator-bundle": "^1.0@dev",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/apache-pack": "^1.0",
@@ -20,6 +21,7 @@
         "symfony/orm-pack": "^1.0",
         "symfony/translation": "*",
         "symfony/validator": "*",
+        "symfony/webpack-encore-pack": "^1.0",
         "symfony/yaml": "*"
     },
     "require-dev": {
