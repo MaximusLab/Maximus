@@ -11,7 +11,6 @@
 namespace Maximus\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ArticleController extends AbstractController
 {
@@ -22,8 +21,6 @@ class ArticleController extends AbstractController
      * @param string $title The english title
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @Route("/{year}/{month}/{day}/{title}", name="article", requirements={"year":"\d{4}", "month":"\d{2}", "day":"\d{2}"})
      */
     public function indexAction($year, $month, $day, $title)
     {
