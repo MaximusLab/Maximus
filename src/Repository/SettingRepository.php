@@ -34,7 +34,8 @@ class SettingRepository extends EntityRepository
         $settings = [];
 
         foreach ($rows as $row) {
-            $settings[$row['key']] = $row['value'];
+            $settings[$row['key']] = @json_decode($row['value'], true);
+            $settings[$row['key']] = is_null($settings[$row['key']]) ? '' : $settings[$row['key']];
         }
 
         return new Settings($settings);
@@ -54,6 +55,7 @@ class SettingRepository extends EntityRepository
             $setting = $this->findOneBy(['key' => $key]);
             $setting = $setting instanceof Setting ? $setting : new Setting($key);
             $value = is_null($value) ? '' : $value;
+            $value = json_encode($value);
 
             $setting->setValue($value);
 

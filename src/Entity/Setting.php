@@ -45,7 +45,7 @@ class Setting
      *
      * @var mixed
      *
-     * @ORM\Column(name="`value`", type="json", options={"comment":"Setting value"})
+     * @ORM\Column(name="`value`", type="text", options={"comment":"Setting value"})
      */
     private $value;
 
