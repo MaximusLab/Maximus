@@ -36,6 +36,9 @@ services:
             - '%maximus.theme%'
             - '%maximus.theme_version%'
 
+    Maximus\Twig\Extension\BreadcrumbExtension:
+        class: Maximus\Twig\Extension\BreadcrumbExtension
+
     Maximus\Twig\Extension\GoogleAnalyticsExtension:
         class: Maximus\Twig\Extension\GoogleAnalyticsExtension
         arguments:
