@@ -57,7 +57,7 @@ services:
         class: Knp\Menu\MenuItem
         factory: ['@maximus.menu_builder', 'consoleMenu']
         tags:
-            - { name: knp_menu.menu, alias: console_menu }
+            - {name: knp_menu.menu, alias: console_menu}
 
     Maximus\Twig\Breadcrumb:
         class: Maximus\Twig\Breadcrumb
