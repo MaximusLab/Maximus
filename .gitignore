@@ -13,6 +13,7 @@
 ###> maximus ###
 /config/packages/maximus.yaml
 /public/theme
+/public/upload
 /themes
 ###< maximus ###
 
