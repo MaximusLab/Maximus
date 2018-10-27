@@ -8,6 +8,15 @@ col-sm-3
 col-sm-9
 {%- endblock form_group_class %}
 
+{% block breadcrumb %}
+{{
+    breadcrumb([
+        {title: 'Home', link: path('console_index')},
+        {title: 'Settings', link: path('console_setting_index'), active: true},
+    ])
+}}
+{% endblock breadcrumb %}
+
 {% block body %}
     {{ form_start(form) }}
         {{ form_widget(form) }}

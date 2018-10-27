@@ -40,21 +40,9 @@
             </div>
         </nav>
 
-        {% if breadcrumb is defined %}
-        <nav aria-label="breadcrumb" id="breadcrumb-container">
-            <div class="container">
-                <ol class="breadcrumb">
-                {% for item in breadcrumb.all %}
-                    <li class="breadcrumb-item {{ item.active ? 'active' : '' }}">
-                        {% if item.link is not empty %}<a href="{{ item.link }}">{% endif %}
-                            {{ item.title }}
-                        {% if item.link is not empty %}</a>{% endif %}
-                    </li>
-                {% endfor %}
-                </ol>
-            </div>
-        </nav>
-        {% endif %}
+        {% block breadcrumb %}
+            {{ breadcrumb([]) }}
+        {% endblock breadcrumb %}
 
         <div class="container">
             {% block flash_messages %}

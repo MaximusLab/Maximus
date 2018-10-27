@@ -13,7 +13,6 @@ namespace Maximus\Controller\Console;
 use Maximus\Entity\Tag;
 use Maximus\Form\Type\TagType;
 use Maximus\Session\Flash;
-use Maximus\Twig\Breadcrumb;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,22 +25,14 @@ class TagController extends AbstractController
     /**
      * @Route("/", name="index")
      *
-     * @param Breadcrumb $breadcrumb
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Breadcrumb $breadcrumb)
+    public function indexAction()
     {
         $tagRepo = $this->getDoctrine()->getRepository('Maximus:Tag');
         $tags = $tagRepo->findAll();
 
-        $breadcrumb
-            ->add('Home', $this->generateUrl('console_index'))
-            ->add('Tags', $this->generateUrl('console_tag_index'), true)
-        ;
-
         $viewData = [
-            'breadcrumb' => $breadcrumb,
             'tags' => $tags,
         ];
 
@@ -53,12 +44,11 @@ class TagController extends AbstractController
      * @Route("/edit/{id}", name="edit", requirements={"id": "\d+"}, defaults={"id": 0})
      *
      * @param Request $request
-     * @param Breadcrumb $breadcrumb
      * @param int $id Tag ID
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction(Request $request, Breadcrumb $breadcrumb, int $id = 0)
+    public function editAction(Request $request, int $id = 0)
     {
         $tag = 0 === $id ? new Tag() : $this->getDoctrine()->getRepository('Maximus:Tag')->find($id);
 
@@ -86,14 +76,7 @@ class TagController extends AbstractController
             }
         }
 
-        $breadcrumb
-            ->add('Home', $this->generateUrl('console_index'))
-            ->add('Tags', $this->generateUrl('console_tag_index'))
-            ->add($action.' Tag', '', true)
-        ;
-
         $viewData = [
-            'breadcrumb' => $breadcrumb,
             'action' => $action,
             'form' => $form->createView(),
         ];

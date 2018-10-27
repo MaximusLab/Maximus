@@ -1,5 +1,14 @@
 {% extends 'console/base.html.twig' %}
 
+{% block breadcrumb %}
+{{
+    breadcrumb([
+        {title: 'Home', link: path('console_index')},
+        {title: 'Authors', link: path('console_author_index'), active: true}
+    ])
+}}
+{% endblock breadcrumb %}
+
 {% block body %}
     <p>
         <a href="{{ path('console_author_create') }}" class="btn btn-success">Create</a>

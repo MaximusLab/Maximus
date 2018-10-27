@@ -26,22 +26,14 @@ class AuthorController extends AbstractController
     /**
      * @Route("/", name="index")
      *
-     * @param Breadcrumb $breadcrumb
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Breadcrumb $breadcrumb)
+    public function indexAction()
     {
         $authorRepo = $this->getDoctrine()->getRepository('Maximus:Author');
         $authors = $authorRepo->findAll();
 
-        $breadcrumb
-            ->add('Home', $this->generateUrl('console_index'))
-            ->add('Authors', $this->generateUrl('console_author_index'), true)
-        ;
-
         $viewData = [
-            'breadcrumb' => $breadcrumb,
             'authors' => $authors,
         ];
 
@@ -53,12 +45,11 @@ class AuthorController extends AbstractController
      * @Route("/edit/{id}", name="edit", requirements={"id": "\d+"}, defaults={"id": 0})
      *
      * @param Request $request
-     * @param Breadcrumb $breadcrumb
      * @param int $id Author ID
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction(Request $request, Breadcrumb $breadcrumb, int $id = 0)
+    public function editAction(Request $request, int $id = 0)
     {
         $author = 0 === $id ? new Author() : $this->getDoctrine()->getRepository('Maximus:Author')->find($id);
 
@@ -86,14 +77,7 @@ class AuthorController extends AbstractController
             }
         }
 
-        $breadcrumb
-            ->add('Home', $this->generateUrl('console_index'))
-            ->add('Authors', $this->generateUrl('console_author_index'))
-            ->add($action.' Author', '', true)
-        ;
-
         $viewData = [
-            'breadcrumb' => $breadcrumb,
             'action' => $action,
             'form' => $form->createView(),
         ];
