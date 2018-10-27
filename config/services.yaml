@@ -62,3 +62,25 @@ services:
     Maximus\Twig\Breadcrumb:
         class: Maximus\Twig\Breadcrumb
         shared: false
+
+    Maximus\Markdown\MarkdownFactory:
+        class: Maximus\Markdown\MarkdownFactory
+
+    Michelf\MarkdownExtra:
+        class: Michelf\MarkdownExtra
+        factory: Maximus\Markdown\MarkdownFactory:createMarkdownParser
+        public: true
+
+    maximus.doctrine.article_pre_persist_eventListener:
+        class: Maximus\Doctrine\EventListener\ArticleEventListener
+        arguments:
+            - '@Michelf\MarkdownExtra'
+        tags:
+            - {name: doctrine.event_listener, event: prePersist, lazy: true}
+
+    maximus.doctrine.article_pre_update_eventListener:
+        class: Maximus\Doctrine\EventListener\ArticleEventListener
+        arguments:
+            - '@Michelf\MarkdownExtra'
+        tags:
+            - {name: doctrine.event_listener, event: preUpdate, lazy: true}

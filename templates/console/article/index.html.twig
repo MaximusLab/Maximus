@@ -1,5 +1,38 @@
 {% extends 'console/base.html.twig' %}
 
 {% block body %}
-    <h1>Article</h1>
+    <p>
+        <a href="{{ path('console_article_create') }}" class="btn btn-success">Create</a>
+    </p>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Published</th>
+            <th>Created</th>
+            <th>Operation</th>
+        </tr>
+        {% for article in articles %}
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.author.name }}</td>
+                <td>
+                {% if article.publishedAt is empty %}
+                    <span class="text-danger">Draft</span>
+                {% else %}
+                    {{ article.publishedAt.format('Y-m-d H:i:s') }}
+                {% endif %}
+                </td>
+                <td>{{ article.createdAt.format('Y-m-d') }}</td>
+                <td>
+                    <a href="{{ path('console_article_edit', {'id': article.id}) }}" class="btn btn-primary btn-sm">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

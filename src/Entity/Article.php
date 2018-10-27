@@ -52,6 +52,15 @@ class Article
     private $alias;
 
     /**
+     * Article background image path
+     *
+     * @var string
+     *
+     * @ORM\Column(name="background_image_path", type="string", length=256, nullable=true, options={"comment":"Article background image path"})
+     */
+    private $backgroundImagePath;
+
+    /**
      * Article Markdown content
      *
      * @var string
@@ -167,6 +176,26 @@ class Article
         $alias = preg_replace('/[^a-zA-Z0-9-]/u', '-', $alias);
 
         $this->alias = $alias;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBackgroundImagePath()
+    {
+        return $this->backgroundImagePath;
+    }
+
+    /**
+     * @param string $backgroundImagePath
+     *
+     * @return Article
+     */
+    public function setBackgroundImagePath(string $backgroundImagePath)
+    {
+        $this->backgroundImagePath = $backgroundImagePath;
 
         return $this;
     }

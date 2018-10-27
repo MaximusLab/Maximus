@@ -10,28 +10,99 @@
 
 namespace Maximus\Controller\Console;
 
+use Maximus\Entity\Article;
+use Maximus\Form\Type\ArticleType;
+use Maximus\Session\Flash;
+use Michelf\MarkdownExtra;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/console")
+ * @Route("/console", name="console_")
  */
 class ArticleController extends AbstractController
 {
     /**
-     * @Route("/", name="console_index")
-     *
-     * @param Request $request
+     * @Route("/", name="index")
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
-        $viewData = [
+        $articleRepo = $this->getDoctrine()->getRepository('Maximus:Article');
+        /** @var Article[] $articles */
+        $articles = $articleRepo->findAll();
 
+        $viewData = [
+            'articles' => $articles,
         ];
 
         return $this->render('console/article/index.html.twig', $viewData);
+    }
+
+    /**
+     * @Route("/article/create", name="article_create")
+     * @Route("/article/edit/{id}", name="article_edit", requirements={"id": "\d+"}, defaults={"id": 0})
+     *
+     * @param Request $request
+     * @param int $id Author ID
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editAction(Request $request, int $id = 0)
+    {
+        $article = 0 === $id ? new Article() : $this->getDoctrine()->getRepository('Maximus:Article')->find($id);
+
+        if (!$article instanceof Article) {
+            $this->addFlash(Flash::ERROR, 'Invalid article id!');
+
+            return $this->redirectToRoute('console_index');
+        }
+
+        $action = empty($article->getId()) ? 'Create' : 'Edit';
+        $form = $this->createForm(ArticleType::class, $article);
+
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+
+                $em->persist($article);
+                $em->flush();
+
+                $this->addFlash(Flash::SUCCESS, $action.' article (id: '.$article->getId().') successfully!');
+
+                return $this->redirectToRoute('console_article_edit', ['id' => $article->getId()]);
+            }
+        }
+
+        $viewData = [
+            'action' => $action,
+            'form' => $form->createView(),
+            'article' => $article,
+        ];
+
+        return $this->render('console/article/edit.html.twig', $viewData);
+    }
+
+    /**
+     * Parse markdown content to HTML
+     *
+     * @param Request $request Request instance
+     * @param MarkdownExtra $markdown
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/article/edit/parse-markdown", name="article_edit_parse_markdown", methods={"POST"})
+     */
+    public function parseMarkdownAction(Request $request, MarkdownExtra $markdown)
+    {
+        $markdownContent = $request->request->get('markdownContent', '');
+        $htmlContent = $markdown->transform($markdownContent);
+
+        return new Response($htmlContent);
     }
 }
