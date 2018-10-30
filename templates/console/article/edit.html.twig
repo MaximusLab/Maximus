@@ -39,6 +39,9 @@ a.markdown-editor-uploader {
 #article_markdown_content_panel textarea, #article_html_content_preview_panel {
     min-height: 300px;
 }
+#article-background-image-preview img {
+    width: 100%;
+}
 </style>
 {% endblock stylesheets %}
 
@@ -112,7 +115,13 @@ a.markdown-editor-uploader {
             </div>
         </div>
 
-        {{ form_row(form.backgroundImagePath) }}
+        {{ form_row(form.backgroundImagePath, {attr:{placeholder: article.backgroundImagePath|default('Choose a background images...')}}) }}
+
+        <div class="form-group row {% if article.backgroundImagePath is empty %}d-none{% endif %}" id="article-background-image-preview">
+            <div class="offset-sm-2 col-sm-10">
+                <img src="{{ asset(article.backgroundImagePath) }}" alt="background image" />
+            </div>
+        </div>
 
         <div class="form-group row">
             <div class="col-sm-2">Published At</div>
@@ -125,20 +134,19 @@ a.markdown-editor-uploader {
             </div>
         </div>
 
-    {% if article.createdAt is not empty %}
+        {% if article.createdAt is not empty %}
         <div class="form-group row">
             <div class="col-sm-2">Created At</div>
             <div class="col-sm-10">
                 {{ article.createdAt.format('Y-m-d H:i:s') }}
             </div>
         </div>
-    {% endif %}
+        {% endif %}
 
         <div class="pt-3">
             <button class="btn btn-primary btn-block">Submit</button>
         </div>
     {{ form_end(form) }}
-
 {% endblock body %}
 
 {% block javascripts %}
@@ -170,12 +178,19 @@ a.markdown-editor-uploader {
         });
     });
 
-    $('.markdown-editor-uploader').click(function(e) {
+    $('.markdown-editor-uploader').click(function() {
         var $button = $(this);
         var textarea = $button.parentsUntil('.tab-content', '.tab-pane').find('textarea')[0];
         var newText = 'insert text...('+Date.now().toString()+')'+"\n";
 
         insertNewTextToTextArea(textarea, newText)
+    });
+
+    $('#article_backgroundImagePath').change(function() {
+        $.each(this.files, function(i, file) {
+            showPreviewImage(file, $('#article-background-image-preview img:first'));
+            $('#article-background-image-preview').removeClass('d-none');
+        });
     });
 
     /**
@@ -198,6 +213,20 @@ a.markdown-editor-uploader {
         textarea.focus();
 
         textarea.scrollTop = scrollTop;
+    }
+
+    /**
+     * @param {File} file
+     * @param {jQuery} $img
+     */
+    function showPreviewImage(file, $img) {
+        var reader = new FileReader();
+
+        reader.onloadend = function() {
+            $img.attr('src', reader.result);
+        };
+
+        reader.readAsDataURL(file);
     }
 </script>
 {% endblock javascripts %}

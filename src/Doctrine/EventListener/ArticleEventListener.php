@@ -12,7 +12,9 @@ namespace Maximus\Doctrine\EventListener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Maximus\Entity\Article;
+use Maximus\Service\FileUploader;
 use Michelf\MarkdownExtra;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Class ArticleEventListener
@@ -27,14 +29,20 @@ class ArticleEventListener
     private $markdown;
 
     /**
+     * @var FileUploader
+     */
+    private $uploader;
+
+    /**
      * ArticlePreFlushEventSubscriber constructor.
      *
      * @param MarkdownExtra $markdown
-     *
+     * @param FileUploader $uploader
      */
-    public function __construct(MarkdownExtra $markdown)
+    public function __construct(MarkdownExtra $markdown, FileUploader $uploader)
     {
         $this->markdown = $markdown;
+        $this->uploader = $uploader;
     }
 
     /**
@@ -73,6 +81,26 @@ class ArticleEventListener
         }
         if ($article->getPublished() && empty($article->getPublishedAt())) {
             $article->setPublishedAt(new \DateTime());
+        }
+
+        $this->uploadBackgroundImage($article);
+    }
+
+    /**
+     * @param Article $article
+     */
+    private function uploadBackgroundImage(Article $article)
+    {
+        $file = $article->getBackgroundImagePath();
+
+        if (is_string($file)) {
+            $file = new File($file);
+        }
+
+        if ($file instanceof File) {
+            $imagePath = $this->uploader->upload($file, Article::MEDIA_UPLOAD_PATH);
+
+            $article->setBackgroundImagePath($imagePath);
         }
     }
 }

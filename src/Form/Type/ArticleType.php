@@ -39,7 +39,7 @@ class ArticleType extends AbstractType
             ->add('author', EntityType::class, ['label' => 'Author', 'choice_label' => 'name', 'class' => Author::class, 'placeholder' => 'Choose an author name'])
             ->add('published', ChoiceType::class, ['label' => 'Published', 'choices' => ['Draft' => 0, 'Published' => 1]])
             ->add('markdownContent', TextareaType::class, ['label' => 'Content', 'attr' => ['placeholder' => 'Write a content or drag your files here...']])
-            ->add('backgroundImagePath', FileType::class, ['label' => 'Background', 'required' => false, 'attr' => ['accept' => '.jpg,.jpeg,.png']])
+            ->add('backgroundImagePath', FileType::class, ['label' => 'Background', 'required' => false, 'attr' => ['accept' => '.jpg,.jpeg,.png'], 'data_class' => null])
         ;
     }
 

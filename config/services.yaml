@@ -75,6 +75,7 @@ services:
         class: Maximus\Doctrine\EventListener\ArticleEventListener
         arguments:
             - '@Michelf\MarkdownExtra'
+            - '@Maximus\Service\FileUploader'
         tags:
             - {name: doctrine.event_listener, event: prePersist, lazy: true}
 
@@ -82,5 +83,11 @@ services:
         class: Maximus\Doctrine\EventListener\ArticleEventListener
         arguments:
             - '@Michelf\MarkdownExtra'
+            - '@Maximus\Service\FileUploader'
         tags:
             - {name: doctrine.event_listener, event: preUpdate, lazy: true}
+
+    Maximus\Service\FileUploader:
+        class: Maximus\Service\FileUploader
+        arguments:
+            - '%kernel.project_dir%/public'
