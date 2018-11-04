@@ -42,6 +42,10 @@ a.markdown-editor-uploader {
 #article-background-image-preview img {
     width: 100%;
 }
+.markdown-editor-highlight {
+    border-width: 2px 3px 2px 2px;
+    border-color: #007bff;
+}
 </style>
 {% endblock stylesheets %}
 
@@ -95,10 +99,11 @@ a.markdown-editor-uploader {
                                     format
                                 </div>
                                 <div class="float-right">
-                                    <a href="javascript:void(0);" class="markdown-editor-uploader">
+                                    <a href="javascript:void(0);" id="markdown-editor-uploader" data-upload-url="{{ path('console_media_upload') }}">
                                         <i class="fas fa-file-upload"></i>
                                         Upload a file
                                     </a>
+                                    <input type="file" accept=".jpg,.jpeg,.png" class="d-none" id="markdown-editor-uploader-file-dialog" />
                                 </div>
                             </div>
                         </div>
@@ -152,6 +157,8 @@ a.markdown-editor-uploader {
 {% block javascripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script type="text/javascript">
+    var $articleMarkdownContent = $('#article_markdownContent');
+
     $('#article_tags').select2({
         placeholder: "Select Tags",
         tags: true,
@@ -171,25 +178,41 @@ a.markdown-editor-uploader {
         $preview.html('');
 
         $.post(parserUrl, {markdownContent: markdownContent}, function(html) {
-            console.log(html);
-
             $preview.html(html);
             $loading.addClass('d-none');
         });
     });
 
-    $('.markdown-editor-uploader').click(function() {
-        var $button = $(this);
-        var textarea = $button.parentsUntil('.tab-content', '.tab-pane').find('textarea')[0];
-        var newText = 'insert text...('+Date.now().toString()+')'+"\n";
+    $('#markdown-editor-uploader').click(function() {
+        $('#markdown-editor-uploader-file-dialog').trigger('click');
+    });
 
-        insertNewTextToTextArea(textarea, newText)
+    $('#markdown-editor-uploader-file-dialog').change(function() {
+        uploadToArticleMarkdownContent(this.files);
     });
 
     $('#article_backgroundImagePath').change(function() {
         $.each(this.files, function(i, file) {
             showPreviewImage(file, $('#article-background-image-preview img:first'));
             $('#article-background-image-preview').removeClass('d-none');
+        });
+    });
+
+    $articleMarkdownContent.on('dragenter dragover dragleave drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation()
+    });
+    $articleMarkdownContent.on('dragenter dragover', function(e) {
+        if (!$articleMarkdownContent.hasClass('markdown-editor-highlight')) {
+            $articleMarkdownContent.addClass('markdown-editor-highlight');
+        }
+    });
+    $articleMarkdownContent.on('dragleave drop', function(e) {
+        $articleMarkdownContent.removeClass('markdown-editor-highlight');
+    });
+    $articleMarkdownContent.on('drop', function(e) {
+        uploadToArticleMarkdownContent(e.originalEvent.dataTransfer.files, function() {
+            $articleMarkdownContent.removeClass('markdown-editor-highlight');
         });
     });
 
@@ -216,10 +239,11 @@ a.markdown-editor-uploader {
     }
 
     /**
-     * @param {File} file
+     * @param {File}   file
      * @param {jQuery} $img
      */
-    function showPreviewImage(file, $img) {
+    function showPreviewImage(file, $img)
+    {
         var reader = new FileReader();
 
         reader.onloadend = function() {
@@ -227,6 +251,40 @@ a.markdown-editor-uploader {
         };
 
         reader.readAsDataURL(file);
+    }
+
+    /**
+     * @param {FileList} files
+     * @param {Function} callback
+     */
+    function uploadToArticleMarkdownContent(files, callback)
+    {
+        var uploadUrl = $('#markdown-editor-uploader').data('upload-url');
+        var data = new FormData();
+
+        for (var i = 0, len = files.length; i < len; ++i) {
+            data.append('files[]', files[i]);
+        }
+
+        $.ajax({
+            url: uploadUrl,
+            type: 'POST',
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                for (var i = 0, len = response.data.urls.length; i < len; ++i) {
+                    var url = response.data.urls[i];
+                    var newText = '![uploaded image]('+url+')';
+                    var textarea = $articleMarkdownContent.get(0);
+
+                    insertNewTextToTextArea(textarea, newText);
+                }
+
+                callback();
+            }
+        });
     }
 </script>
 {% endblock javascripts %}

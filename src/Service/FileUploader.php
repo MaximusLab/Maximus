@@ -46,8 +46,11 @@ class FileUploader
         $dir = '/'.trim($dir, '/ ');
         $filePath = $dir.'/'.substr($fileName, 0, 2);
         $targetDirectory = $this->baseDirectory.$filePath;
+        $fullFilePath = $targetDirectory.'/'.$fileName;
 
-        $file->move($targetDirectory, $fileName);
+        if (!file_exists($fullFilePath)) {
+            $file->move($targetDirectory, $fileName);
+        }
 
         return $filePath.'/'.$fileName;
     }

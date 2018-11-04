@@ -195,7 +195,7 @@ class Article
      *
      * @return Article
      */
-    public function setBackgroundImagePath(string $backgroundImagePath)
+    public function setBackgroundImagePath(?string $backgroundImagePath)
     {
         $this->backgroundImagePath = $backgroundImagePath;
 

@@ -11,6 +11,7 @@
 namespace Maximus\Doctrine\EventListener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Maximus\Entity\Article;
 use Maximus\Service\FileUploader;
 use Michelf\MarkdownExtra;
@@ -58,13 +59,20 @@ class ArticleEventListener
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param PreUpdateEventArgs $args
      */
-    public function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(PreUpdateEventArgs $args)
     {
         $object = $args->getObject();
 
         if ($object instanceof Article) {
+            $changes = $args->getEntityChangeSet();
+
+            // Set previous backgroundImagePath value when no new upload file was sent
+            if (is_null($object->getBackgroundImagePath()) && !empty($changes['backgroundImagePath'])) {
+                $object->setBackgroundImagePath($changes['backgroundImagePath'][0]);
+            }
+
             $this->prepareArticle($object);
         }
     }
@@ -93,7 +101,7 @@ class ArticleEventListener
     {
         $file = $article->getBackgroundImagePath();
 
-        if (is_string($file)) {
+        if (is_string($file) && file_exists($file)) {
             $file = new File($file);
         }
 
