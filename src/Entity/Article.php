@@ -363,6 +363,30 @@ class Article
     }
 
     /**
+     * @return string
+     */
+    public function getPublishedYear()
+    {
+        return $this->publishedAt->format('Y');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublishedMonth()
+    {
+        return $this->publishedAt->format('m');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublishedDay()
+    {
+        return $this->publishedAt->format('d');
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
