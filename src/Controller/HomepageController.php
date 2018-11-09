@@ -10,6 +10,7 @@
 
 namespace Maximus\Controller;
 
+use Maximus\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,12 +24,13 @@ class HomepageController extends AbstractController
     public function indexAction()
     {
         $articles = $this->getDoctrine()
-            ->getRepository('Maximus:Article')
+            ->getRepository(Article::class)
             ->findBy(['published' => true], ['publishedAt' => 'DESC']);
         $articlesPerYear = [];
 
+        /** @var Article $article */
         foreach ($articles as $article) {
-            $year = $article->getPublishedAt()->format('Y');
+            $year = $article->getPublishedYear();
 
             if (!array_key_exists($year, $articlesPerYear)) {
                 $articlesPerYear[$year] = [];
