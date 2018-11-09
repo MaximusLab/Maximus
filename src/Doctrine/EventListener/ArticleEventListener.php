@@ -13,8 +13,8 @@ namespace Maximus\Doctrine\EventListener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Maximus\Entity\Article;
+use Maximus\Markdown\Markdown;
 use Maximus\Service\FileUploader;
-use Michelf\MarkdownExtra;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class ArticleEventListener
 {
     /**
-     * @var MarkdownExtra
+     * @var Markdown
      */
     private $markdown;
 
@@ -37,10 +37,10 @@ class ArticleEventListener
     /**
      * ArticlePreFlushEventSubscriber constructor.
      *
-     * @param MarkdownExtra $markdown
+     * @param Markdown $markdown
      * @param FileUploader $uploader
      */
-    public function __construct(MarkdownExtra $markdown, FileUploader $uploader)
+    public function __construct(Markdown $markdown, FileUploader $uploader)
     {
         $this->markdown = $markdown;
         $this->uploader = $uploader;

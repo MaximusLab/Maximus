@@ -47,6 +47,9 @@ a.markdown-editor-uploader {
     border-color: #007bff;
 }
 </style>
+<link rel="stylesheet" href="{{ asset('css/article.css', 'theme') }}">
+<link rel="stylesheet" href="{{ asset('css/pygments-common.css', 'theme') }}">
+<link rel="stylesheet" href="{{ asset('css/pygments-monokai.css', 'theme') }}">
 {% endblock stylesheets %}
 
 {% block breadcrumb %}
@@ -111,7 +114,7 @@ a.markdown-editor-uploader {
                             <div id="article_html_content_preview_loading" class="d-none">
                                 Generating Previews, Please Wait...
                             </div>
-                            <div id="article_html_content_preview">
+                            <div id="article_html_content_preview" class="article-content">
                                 {{ article.htmlContent|raw }}
                             </div>
                         </div>

@@ -12,8 +12,8 @@ namespace Maximus\Controller\Console;
 
 use Maximus\Entity\Article;
 use Maximus\Form\Type\ArticleType;
+use Maximus\Markdown\Markdown;
 use Maximus\Session\Flash;
-use Michelf\MarkdownExtra;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -92,13 +92,13 @@ class ArticleController extends AbstractController
      * Parse markdown content to HTML
      *
      * @param Request $request Request instance
-     * @param MarkdownExtra $markdown
+     * @param Markdown $markdown
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/article/edit/parse-markdown", name="article_edit_parse_markdown", methods={"POST"})
      */
-    public function parseMarkdownAction(Request $request, MarkdownExtra $markdown)
+    public function parseMarkdownAction(Request $request, Markdown $markdown)
     {
         $markdownContent = $request->request->get('markdownContent', '');
         $htmlContent = $markdown->transform($markdownContent);
