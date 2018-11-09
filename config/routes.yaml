@@ -7,7 +7,7 @@ custom_page:
     controller: Maximus\Controller\CustomPageController::pageAction
 
 article:
-    path: /{year}/{month}/{day}/{title}
+    path: /{year}/{month}/{day}/{alias}
     controller: Maximus\Controller\ArticleController::indexAction
     requirements:
         year: '\d{4}'

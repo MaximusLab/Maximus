@@ -10,6 +10,7 @@
 
 namespace Maximus\Controller;
 
+use Maximus\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ArticleController extends AbstractController
@@ -18,22 +19,25 @@ class ArticleController extends AbstractController
      * @param int    $year  The year part of date when the article published
      * @param int    $month The month part of date when the article published
      * @param int    $day   The day part of date when the article published
-     * @param string $title The english title
+     * @param string $alias The english title
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction($year, $month, $day, $title)
+    public function indexAction($year, $month, $day, $alias)
     {
+        $article = $this->getDoctrine()->getRepository(Article::class)
+            ->findOneBy(['alias' => $alias]);
+
+        if (!$article instanceof Article) {
+            return $this->redirectToRoute('homepage');
+        }
+
         $viewData = [
-            'article' => [
-                'title' => '這是Game標tool123題 123The story, the most popular youth wear.123口嘗味123，她123多疼xyz你！',
-                'tags' => ['PHP', 'Paginator'],
-                'publishedAt' => new \DateTime('2018-02-18 13:04:05'),
-            ],
-            'englishTitle' => $title,
-            'year' => $year,
-            'month' => $month,
-            'day' => $day,
+            'article' => $article,
+            'alias' => $alias,
+            'year' => $article->getPublishedYear(),
+            'month' => $article->getPublishedMonth(),
+            'day' => $article->getPublishedDay(),
         ];
 
         return $this->render('@theme/article.html.twig', $viewData);
