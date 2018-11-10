@@ -120,6 +120,38 @@ class Markdown extends MarkdownExtra
                 unset($options['linenos']);
             }
 
+            switch ($language) {
+                case 'note':
+                    $code = $this->runBlockGamut($code);
+                    $title = <<<ICON
+<div class="note-title">
+    <span class="fa-stack fa-md">
+      <i class="fa fa-circle fa-stack-2x"></i>
+      <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+    </span>
+    <span class="text">Note</span>
+</div>
+ICON;
+                    $code = $title.$code;
+
+                    return $this->hashBlock($code);
+
+                case 'tip':
+                    $code = $this->runBlockGamut($code);
+                    $title = <<<ICON
+<div class="tip-title">
+    <span class="fa-stack fa-md">
+      <i class="fa fa-circle fa-stack-2x"></i>
+      <i class="fa fa-lightbulb-o fa-stack-1x fa-inverse"></i>
+    </span>
+    <span class="text">Tip</span>
+</div>
+ICON;
+                    $code = $title.$code;
+
+                    return $this->hashBlock($code);
+            }
+
             return $pygments->highlight($code, $language, 'html', $options);
         };
     }
