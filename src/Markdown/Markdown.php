@@ -20,6 +20,8 @@ use Michelf\MarkdownExtra;
  */
 class Markdown extends MarkdownExtra
 {
+    public $table_align_class_tmpl = 'text-%%';
+
     /**
      * {@inheritdoc}
      */
