@@ -150,6 +150,26 @@ ICON;
                     $code = $title.$code;
 
                     return $this->hashBlock($code);
+
+                case 'see-also':
+                    $code = $this->runBlockGamut($code);
+                    $title = <<<ICON
+<div class="see-also-title">
+    <span class="fa-stack fa-md">
+      <i class="fa fa-circle fa-stack-2x"></i>
+      <i class="fa fa-share fa-stack-1x fa-inverse"></i>
+    </span>
+    <span class="text">See Also</span>
+</div>
+ICON;
+                    $code = $title.$code;
+
+                    return $this->hashBlock($code);
+
+                case 'sidebar':
+                    $code = $this->runBlockGamut($code);
+
+                    return $this->hashBlock($code);
             }
 
             return $pygments->highlight($code, $language, 'html', $options);
