@@ -1,6 +1,11 @@
 {
+    "dependencies": {
+        "codemirror": "^5.42.0",
+        "js-beautify": "^1.8.8"
+    },
     "devDependencies": {
-        "@symfony/webpack-encore": "^0.20.0",
+        "@symfony/webpack-encore": "^0.22.2",
+        "less-loader": "^4.1.0",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
