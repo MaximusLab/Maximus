@@ -21,8 +21,22 @@ col-sm-9
     {{ form_start(form) }}
         {{ form_widget(form) }}
 
-        <div class="pt-3">
+        <div class="pt-3 form-group row">
             <button class="btn btn-primary btn-block">Submit</button>
         </div>
     {{ form_end(form) }}
+{% endblock %}
+
+{% block stylesheets %}
+<link href="{{ asset('build/console/setting.css') }}" rel="stylesheet" />
+<style type="text/css">
+    .CodeMirror {
+        height: auto;
+        border: 1px solid #272822;
+        border-radius: .25rem;
+    }
+</style>
+{% endblock stylesheets %}
+{% block javascripts %}
+<script src="{{ asset('build/console/setting.js') }}"></script>
 {% endblock %}
