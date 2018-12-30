@@ -34,16 +34,33 @@ class SettingsType extends AbstractType
                 [
                     'label' => 'Theme variables',
                     'required' => false,
-                    'help' => 'Theme variables is JSON format'
+                    'help' => 'Theme variables is JSON format',
                 ]
             )
-            ->add('gaTrackingId', TextType::class, ['label' => 'Google Analytics Tracking Id', 'required' => false])
-            ->add('gaTrackingScripts', TextareaType::class, ['label' => 'Google Analytics Scripts', 'required' => false])
+            ->add('uploadBasePath', TextType::class,
+                [
+                    'label' => 'Upload base path',
+                    'required' => false,
+                ]
+            )
+            ->add('gaTrackingId', TextType::class,
+                [
+                    'label' => 'Google Analytics Tracking Id',
+                    'required' => false,
+                ]
+            )
+            ->add('gaTrackingScripts', TextareaType::class,
+                [
+                    'label' => 'Google Analytics Scripts',
+                    'required' => false,
+                    'help' => 'Write custom gtag script here, ref: https://developers.google.com/analytics/devguides/collection/gtagjs/sending-data',
+                ]
+            )
             ->add('disqusShortName', TextType::class,
                 [
                     'label' => 'Disqus short name',
                     'required' => false,
-                    'help' => 'e.g., the short name of https://foobar.disqus.com/embed.js is foobar'
+                    'help' => 'e.g., the short name of https://foobar.disqus.com/embed.js is foobar',
                 ]
             )
         ;
@@ -51,7 +68,7 @@ class SettingsType extends AbstractType
         $builder->get('themeVariables')
             ->addModelTransformer(new CallbackTransformer(
                 function ($valueAsArray) {
-                    return json_encode($valueAsArray);
+                    return json_encode($valueAsArray, JSON_UNESCAPED_UNICODE|JSON_BIGINT_AS_STRING|JSON_UNESCAPED_SLASHES);
                 },
                 function ($valueAsString) {
                     return json_decode($valueAsString, true);

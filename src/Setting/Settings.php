@@ -25,13 +25,46 @@ class Settings
     private $theme = 'default';
 
     /**
+     * Theme version
+     *
+     * @var string
+     */
+    private $themeVersion = '';
+
+    /**
      * Theme variables
      *
      * @MaximusAssert\Json
      *
+     * @var array
+     */
+    private $themeVariables = [];
+
+    /**
+     * Menu settings
+     *
+     * For example:
+     *
+     * <code><pre>
+     * [
+     *     {"route_name": "homepage", "title": "Home"},
+     *     {"route_name": "tags", "title": "Tags"},
+     *     {"route_name": "custom_page", "route_params": {"viewName": "author"}, "title": "About Me"}
+     * ]
+     * </pre></code>
+     *
+     * @MaximusAssert\Json
+     *
+     * @var array
+     */
+    private $themeMenus = [];
+
+    /**
+     * Upload base path
+     *
      * @var string
      */
-    private $themeVariables = '{}';
+    private $uploadBasePath = '';
 
     /**
      * Google Analytics ID
@@ -101,7 +134,27 @@ class Settings
     }
 
     /**
-     * @return mixed
+     * @return string
+     */
+    public function getThemeVersion()
+    {
+        return $this->themeVersion;
+    }
+
+    /**
+     * @param string $themeVersion
+     *
+     * @return Settings
+     */
+    public function setThemeVersion(string $themeVersion)
+    {
+        $this->themeVersion = $themeVersion;
+
+        return $this;
+    }
+
+    /**
+     * @return array
      */
     public function getThemeVariables()
     {
@@ -109,13 +162,61 @@ class Settings
     }
 
     /**
-     * @param mixed $themeVariables
+     * @param array $themeVariables
      *
      * @return Settings
      */
-    public function setThemeVariables($themeVariables)
+    public function setThemeVariables(array $themeVariables)
     {
         $this->themeVariables = $themeVariables;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadBasePath()
+    {
+        return $this->uploadBasePath;
+    }
+
+    /**
+     * @return array
+     */
+    public function getThemeMenus()
+    {
+        return $this->themeMenus;
+    }
+
+    /**
+     * @param array $themeMenus
+     *
+     * @return Settings
+     */
+    public function setThemeMenus(array $themeMenus)
+    {
+        $this->themeMenus = [];
+
+        foreach ($themeMenus as $menu) {
+            if (!isset($menu['route_params'])) {
+                $menu['route_params'] = [];
+            }
+
+            $this->themeMenus[] = $menu;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $uploadBasePath
+     *
+     * @return Settings
+     */
+    public function setUploadBasePath($uploadBasePath)
+    {
+        $this->uploadBasePath = $uploadBasePath;
 
         return $this;
     }
