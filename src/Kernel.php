@@ -2,30 +2,48 @@
 
 namespace Maximus;
 
+use Maximus\Setting\Settings;
+use Maximus\Theme\Asset\Packages;
+use Maximus\Theme\Twig\Loader\FilesystemLoader;
+use Maximus\Theme\Twig\TemplateCacheCacheWarmer;
+use Maximus\Theme\Twig\TemplateIterator;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
-class Kernel extends BaseKernel
+/**
+ * Maximus Kernel
+ */
+class Kernel extends BaseKernel implements CompilerPassInterface
 {
     use MicroKernelTrait;
 
     const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
+    /**
+     * {@inheritdoc}
+     */
     public function getCacheDir()
     {
         return $this->getProjectDir().'/var/cache/'.$this->environment;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLogDir()
     {
         return $this->getProjectDir().'/var/log';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function registerBundles()
     {
         $contents = require $this->getProjectDir().'/config/bundles.php';
@@ -36,6 +54,9 @@ class Kernel extends BaseKernel
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
     {
         $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
@@ -49,10 +70,11 @@ class Kernel extends BaseKernel
         $loader->load($confDir.'/{packages}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
-
-        $this->configMaximus($container);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
         $confDir = $this->getProjectDir().'/config';
@@ -62,68 +84,28 @@ class Kernel extends BaseKernel
         $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
     }
 
-    private function configMaximus(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
     {
-        $filePath = sprintf(
-            '%s/themes_installed/%s/theme.json',
-            $this->getProjectDir(),
-            $container->getParameter('maximus.theme')
-        );
+        $container->getDefinition('assets.packages')
+            ->setClass(Packages::class)
+            ->addArgument(new Reference(Settings::class));
 
-        if (!file_exists($filePath)) {
-            return;
-        }
+        $container->getDefinition('twig.loader.native_filesystem')
+            ->setClass(FilesystemLoader::class)
+            ->addArgument($this->getProjectDir())
+            ->addArgument(new Reference(Settings::class));
 
-        $container->addResource(new FileResource($filePath));
+        $container->getDefinition('twig.cache_warmer')
+            ->setClass(TemplateCacheCacheWarmer::class)
+            ->addArgument($this->getProjectDir())
+            ->addArgument(new Reference(Settings::class));
 
-        $config = new ParameterBag(@json_decode(file_get_contents($filePath), true));
-        $variables = $config->get('variables');
-
-        if ($container->hasParameter('maximus.theme_variables')) {
-            $variables = $this->mergeThemeVariables($variables, $container->getParameter('maximus.theme_variables'));
-        }
-
-        $container->setParameter('maximus.menu', $this->getMaximusMenu($container, $config));
-        $container->setParameter('maximus.theme_version', $config->get('version'));
-        $container->setParameter('maximus.theme_variables', $variables);
-    }
-
-    private function mergeThemeVariables(array $config1 = [], array $config2 = [])
-    {
-        foreach ($config2 as $key => $value) {
-            if (is_array($value) && array_key_exists($key, $config1) && is_array($config1[$key])) {
-                $config1[$key] = $this->mergeThemeVariables($config1[$key], $value);
-                continue;
-            }
-
-            $config1[$key] = $value;
-        }
-
-        return $config1;
-    }
-
-    private function getMaximusMenu(ContainerBuilder $container, ParameterBag $config)
-    {
-        $menu = $config->get('menu');
-
-        if ($container->hasParameter('maximus.menu')) {
-            $menu = $container->getParameter('maximus.menu');
-        }
-
-        // Default menu
-        if (empty($menu)) {
-            $menu = [
-                ['route_name' => 'homepage', 'title' => 'Home'],
-                ['route_name' => 'tags', 'title' => 'Tags'],
-            ];
-        }
-
-        foreach ($menu as &$info) {
-            if (!array_key_exists('route_params', $info) || !is_array($info['route_params'])) {
-                $info['route_params'] = [];
-            }
-        }
-
-        return $menu;
+        $container->getDefinition('twig.template_iterator')
+            ->setClass(TemplateIterator::class)
+            ->addArgument($this->getProjectDir())
+            ->addArgument(new Reference(Settings::class));
     }
 }

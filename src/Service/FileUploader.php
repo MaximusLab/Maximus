@@ -10,6 +10,7 @@
 
 namespace Maximus\Service;
 
+use Maximus\Setting\Settings;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -27,11 +28,11 @@ class FileUploader
     /**
      * FileUploader constructor.
      *
-     * @param string $baseDirectory
+     * @param Settings $settings
      */
-    public function __construct(string $baseDirectory)
+    public function __construct(Settings $settings)
     {
-        $this->baseDirectory = $baseDirectory;
+        $this->baseDirectory = $settings->getUploadBasePath();
     }
 
     /**

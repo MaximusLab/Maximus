@@ -10,6 +10,7 @@
 
 namespace Maximus\Twig\Extension;
 
+use Maximus\Setting\Settings;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -28,15 +29,12 @@ class GoogleAnalyticsExtension extends AbstractExtension
     /**
      * GoogleAnalyticsExtension constructor.
      *
-     * @param array $options {
-     *     @var string $id      Google Analytics Tracking ID
-     *     @var string $scripts Custom Javascript contents
-     * }
+     * @param Settings $settings
      */
-    public function __construct(array $options)
+    public function __construct(Settings $settings)
     {
-        $this->trackingId = $options['id'];
-        $this->scripts = $options['scripts'];
+        $this->trackingId = $settings->getGaTrackingId();
+        $this->scripts = $settings->getGaTrackingScripts();
     }
 
     /**

@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Article
 {
-    const MEDIA_UPLOAD_PATH = '/upload/media';
+    const MEDIA_UPLOAD_PATH = '/media';
 
     /**
      * Article ID

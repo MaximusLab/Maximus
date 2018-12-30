@@ -3,12 +3,8 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
 
-    paths:
-        '%kernel.project_dir%/themes_custom/%maximus.theme%': theme
-        '%kernel.project_dir%/themes/%maximus.theme%': theme
-
     form_themes: ['bootstrap_4_horizontal_layout.html.twig']
 
     globals:
-        theme: '%maximus.theme_variables%'
-        menu: '%maximus.menu%'
+        theme: '@maximus.theme.variables'
+        menu: '@maximus.theme.menus'

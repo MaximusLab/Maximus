@@ -10,6 +10,7 @@
 
 namespace Maximus\Twig\Extension;
 
+use Maximus\Setting\Settings;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -23,13 +24,11 @@ class DisqusExtension extends AbstractExtension
     /**
      * DisqusExtension constructor.
      *
-     * @param array $options {
-     *     @var string $short_name Disqus short name
-     * }
+     * @param Settings $settings
      */
-    public function __construct(array $options)
+    public function __construct(Settings $settings)
     {
-        $this->shortName = $options['short_name'];
+        $this->shortName = $settings->getDisqusShortName();
     }
 
     /**

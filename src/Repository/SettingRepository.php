@@ -10,7 +10,7 @@
 
 namespace Maximus\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Maximus\Entity\Setting;
@@ -19,19 +19,19 @@ use Maximus\Setting\Settings;
 /**
  * SettingRepository
  */
-class SettingRepository extends EntityRepository
+class SettingRepository extends ServiceEntityRepository
 {
     /**
      * @return Settings
      */
     public function getSettings()
     {
+        $settings = [];
         $rows = $this->createQueryBuilder('setting')
             ->select(['setting.key', 'setting.value'])
             ->getQuery()
             ->getArrayResult()
         ;
-        $settings = [];
 
         foreach ($rows as $row) {
             $settings[$row['key']] = @json_decode($row['value'], true);

@@ -10,30 +10,27 @@
 
 namespace Maximus\Asset\VersionStrategy;
 
+use Maximus\Setting\Settings;
 use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
 
-class MaximusVersionStrategy implements VersionStrategyInterface
+/**
+ * Class ThemeVersionStrategy
+ */
+class ThemeVersionStrategy implements VersionStrategyInterface
 {
     /**
-     * @var string The theme name
+     * @var Settings
      */
-    private $theme;
-
-    /**
-     * @var string Theme asset file version
-     */
-    private $version;
+    private $settings;
 
     /**
      * MaximusVersionStrategy constructor.
      *
-     * @param string $theme   The theme name
-     * @param string $version The theme version
+     * @param Settings $settings
      */
-    public function __construct($theme, $version)
+    public function __construct(Settings $settings)
     {
-        $this->theme = $theme;
-        $this->version = $version;
+        $this->settings = $settings;
     }
 
     /**
@@ -41,11 +38,7 @@ class MaximusVersionStrategy implements VersionStrategyInterface
      */
     public function getVersion($path)
     {
-        if (0 === strpos(ltrim($path, '/ '), 'theme/'.$this->theme)) {
-            return $this->version;
-        }
-
-        return '';
+        return $this->settings->getThemeVersion();
     }
 
     /**
@@ -53,11 +46,13 @@ class MaximusVersionStrategy implements VersionStrategyInterface
      */
     public function applyVersion($path)
     {
-        if ('' === $this->version) {
+        $version = $this->getVersion($path);
+
+        if ('' === $version) {
             return $path;
         }
 
-        $versionized = sprintf('%s?%s', ltrim($path, '/'), $this->version);
+        $versionized = sprintf('%s?v%s', ltrim($path, '/'), $version);
 
         if ($path && '/' === $path[0]) {
             return '/'.$versionized;

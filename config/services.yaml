@@ -27,14 +27,40 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    Maximus\Asset\VersionStrategy\MaximusVersionStrategy:
-        class: Maximus\Asset\VersionStrategy\MaximusVersionStrategy
+    Maximus\Repository\SettingRepository:
+        class: Maximus\Repository\SettingRepository
         arguments:
-            - '%maximus.theme%'
-            - '%maximus.theme_version%'
+            - '@Doctrine\Common\Persistence\ManagerRegistry'
+            - Maximus\Entity\Setting
+
+    Maximus\Setting\SettingsLoader:
+        class: Maximus\Setting\SettingsLoader
+        arguments:
+            - '%kernel.project_dir%'
+            - '@Maximus\Repository\SettingRepository'
+
+    Maximus\Setting\Settings:
+        class: Maximus\Setting\Settings
+        factory:
+            ['@Maximus\Setting\SettingsLoader', 'load']
+        public: true
+
+    maximus.theme.variables:
+        class: ArrayObject
+        factory: ['@Maximus\Setting\SettingsLoader', 'loadThemeVariables']
+
+    maximus.theme.menus:
+        class: ArrayObject
+        factory: ['@Maximus\Setting\SettingsLoader', 'loadThemeMenus']
+
+    Maximus\Asset\VersionStrategy\ThemeVersionStrategy:
+        class: Maximus\Asset\VersionStrategy\ThemeVersionStrategy
+        arguments:
+            - '@Maximus\Setting\Settings'
 
     Maximus\Twig\Extension\BreadcrumbExtension:
         class: Maximus\Twig\Extension\BreadcrumbExtension
@@ -42,12 +68,12 @@ services:
     Maximus\Twig\Extension\GoogleAnalyticsExtension:
         class: Maximus\Twig\Extension\GoogleAnalyticsExtension
         arguments:
-            - '%maximus.ga_tracking%'
+            - '@Maximus\Setting\Settings'
 
     Maximus\Twig\Extension\DisqusExtension:
         class: Maximus\Twig\Extension\DisqusExtension
         arguments:
-        - '%maximus.disqus%'
+            - '@Maximus\Setting\Settings'
 
     maximus.menu_builder:
         class: Maximus\Menu\Builder
@@ -67,7 +93,7 @@ services:
         class: Maximus\Markdown\Markdown
         public: true
 
-    maximus.doctrine.article_pre_persist_eventListener:
+    maximus.doctrine.article_pre_persist_event_listener:
         class: Maximus\Doctrine\EventListener\ArticleEventListener
         arguments:
             - '@Maximus\Markdown\Markdown'
@@ -75,7 +101,7 @@ services:
         tags:
             - {name: doctrine.event_listener, event: prePersist, lazy: true}
 
-    maximus.doctrine.article_pre_update_eventListener:
+    maximus.doctrine.article_pre_update_event_listener:
         class: Maximus\Doctrine\EventListener\ArticleEventListener
         arguments:
             - '@Maximus\Markdown\Markdown'
@@ -86,4 +112,4 @@ services:
     Maximus\Service\FileUploader:
         class: Maximus\Service\FileUploader
         arguments:
-            - '%kernel.project_dir%/public'
+            - '@Maximus\Setting\Settings'

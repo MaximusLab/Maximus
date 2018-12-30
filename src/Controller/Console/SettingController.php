@@ -12,6 +12,7 @@ namespace Maximus\Controller\Console;
 
 use Maximus\Form\Type\SettingsType;
 use Maximus\Session\Flash;
+use Maximus\Setting\Settings;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +35,7 @@ class SettingController extends AbstractController
     public function indexAction(Request $request)
     {
         $settingsRepo = $this->getDoctrine()->getRepository('Maximus:Setting');
-        $settings = $settingsRepo->getSettings();
+        $settings = $this->get(Settings::class);
         $form = $this->createForm(SettingsType::class, $settings);
 
         if ($request->isMethod('POST')) {
@@ -54,5 +55,15 @@ class SettingController extends AbstractController
         ];
 
         return $this->render('console/setting/index.html.twig', $viewData);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            Settings::class => Settings::class,
+        ]);
     }
 }
