@@ -44,6 +44,7 @@ class Builder
         $menu->addChild('Tags', ['route' => 'console_tag_index']);
         $menu->addChild('Authors', ['route' => 'console_author_index']);
         $menu->addChild('Settings', ['route' => 'console_setting_index']);
+        $menu->addChild('Blog', ['route' => 'homepage']);
 
         $menu->setChildrenAttribute('class', 'navbar-nav ml-auto');
 
