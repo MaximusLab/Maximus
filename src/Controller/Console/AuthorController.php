@@ -13,7 +13,6 @@ namespace Maximus\Controller\Console;
 use Maximus\Entity\Author;
 use Maximus\Form\Type\AuthorType;
 use Maximus\Session\Flash;
-use Maximus\Twig\Breadcrumb;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
