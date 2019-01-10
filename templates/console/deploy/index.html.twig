@@ -1,0 +1,25 @@
+{% extends 'console/base.html.twig' %}
+
+{% block breadcrumb %}
+{{
+    breadcrumb([
+        {title: 'Console Home', link: path('console_index')},
+        {title: 'Articles', link: path('console_index')},
+        {title: 'Deploy', link: path('console_deploy_index'), active: true}
+    ])
+}}
+{% endblock breadcrumb %}
+
+{% block body %}
+<p>
+    <button id="generate" data-data="{{ {
+        urls: urls,
+        copyAssetUrl: path('console_deploy_copy_assets'),
+        generateFileUrl: path('console_deploy_generate_file')
+    }|json_encode|e('html_attr') }}">Generate</button>
+</p>
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('build/console/deploy.js') }}"></script>
+{% endblock %}

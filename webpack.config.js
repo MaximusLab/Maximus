@@ -18,6 +18,7 @@ Encore
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
     .addEntry('console/setting', './assets/console/setting.js')
+    .addEntry('console/deploy', './assets/console/deploy.js')
 
     /*
      * FEATURE CONFIG
@@ -41,6 +42,8 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
+
+    .disableSingleRuntimeChunk()
 ;
 
 module.exports = Encore.getWebpackConfig();
