@@ -88,6 +88,48 @@ class Settings
     private $disqusShortName = '';
 
     /**
+     * The URL prefix for the blog
+     *
+     * @var string
+     */
+    private $urlPrefix = '';
+
+    /**
+     * The file path for the git binary
+     *
+     * @var string
+     */
+    private $gitFilePath = '';
+
+    /**
+     * The URL for the git repository
+     *
+     * @var string
+     */
+    private $gitRepositoryUrl = '';
+
+    /**
+     * The SSH private key file path
+     *
+     * @var string
+     */
+    private $gitSSHPrivateKeyPath = '';
+
+    /**
+     * Git commit author name
+     *
+     * @var string
+     */
+    private $gitAuthorName = '';
+
+    /**
+     * Git commit author email
+     *
+     * @var string
+     */
+    private $gitAuthorEmail = '';
+
+    /**
      * Settings constructor.
      *
      * @param array $settings
@@ -182,6 +224,8 @@ class Settings
     }
 
     /**
+     * @see Settings::$themeMenus
+     *
      * @return array
      */
     public function getThemeMenus()
@@ -190,6 +234,8 @@ class Settings
     }
 
     /**
+     * @see Settings::$themeMenus
+     *
      * @param array $themeMenus
      *
      * @return Settings
@@ -277,6 +323,126 @@ class Settings
     public function setDisqusShortName(string $disqusShortName = null)
     {
         $this->disqusShortName = $disqusShortName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrlPrefix()
+    {
+        return $this->urlPrefix;
+    }
+
+    /**
+     * @param string $urlPrefix
+     *
+     * @return Settings
+     */
+    public function setUrlPrefix($urlPrefix)
+    {
+        $this->urlPrefix = $urlPrefix;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGitFilePath()
+    {
+        return $this->gitFilePath;
+    }
+
+    /**
+     * @param string $gitFilePath
+     *
+     * @return Settings
+     */
+    public function setGitFilePath($gitFilePath)
+    {
+        $this->gitFilePath = $gitFilePath;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGitRepositoryUrl()
+    {
+        return $this->gitRepositoryUrl;
+    }
+
+    /**
+     * @param string $gitRepositoryUrl
+     *
+     * @return Settings
+     */
+    public function setGitRepositoryUrl($gitRepositoryUrl)
+    {
+        $this->gitRepositoryUrl = $gitRepositoryUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGitSSHPrivateKeyPath()
+    {
+        return $this->gitSSHPrivateKeyPath;
+    }
+
+    /**
+     * @param string $gitSSHPrivateKeyPath
+     *
+     * @return Settings
+     */
+    public function setGitSSHPrivateKeyPath($gitSSHPrivateKeyPath)
+    {
+        $this->gitSSHPrivateKeyPath = $gitSSHPrivateKeyPath;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGitAuthorName()
+    {
+        return $this->gitAuthorName;
+    }
+
+    /**
+     * @param string $gitAuthorName
+     *
+     * @return Settings
+     */
+    public function setGitAuthorName($gitAuthorName)
+    {
+        $this->gitAuthorName = $gitAuthorName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGitAuthorEmail()
+    {
+        return $this->gitAuthorEmail;
+    }
+
+    /**
+     * @param string $gitAuthorEmail
+     *
+     * @return Settings
+     */
+    public function setGitAuthorEmail($gitAuthorEmail)
+    {
+        $this->gitAuthorEmail = $gitAuthorEmail;
 
         return $this;
     }

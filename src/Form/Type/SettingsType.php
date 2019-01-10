@@ -13,6 +13,7 @@ namespace Maximus\Form\Type;
 use Maximus\Setting\Settings;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -63,6 +64,48 @@ class SettingsType extends AbstractType
                     'help' => 'e.g., the short name of https://foobar.disqus.com/embed.js is foobar',
                 ]
             )
+            ->add('urlPrefix', TextType::class,
+                [
+                    'label' => 'URL prefix',
+                    'required' => false,
+                    'help' => 'e.g., https://foobar.example.com/',
+                ]
+            )
+            ->add('gitFilePath', TextType::class,
+                [
+                    'label' => 'Git Path',
+                    'required' => false,
+                    'help' => 'e.g., C:\Program Files\Git\bin\git.exe',
+                ]
+            )
+            ->add('gitRepositoryUrl', TextType::class,
+                [
+                    'label' => 'Git Repository Url',
+                    'required' => false,
+                    'help' => 'e.g., git@github.com:demo/example.github.io.git',
+                ]
+            )
+            ->add('gitSSHPrivateKeyPath', TextType::class,
+                [
+                    'label' => 'SSH private key file path',
+                    'required' => false,
+                    'help' => 'e.g., C:\Users\Blogger\.ssh\id_rsa',
+                ]
+            )
+            ->add('gitAuthorName', TextType::class,
+                [
+                    'label' => 'Git commit author name',
+                    'required' => false,
+                    'help' => 'e.g., Blogger',
+                ]
+            )
+            ->add('gitAuthorEmail', EmailType::class,
+                [
+                    'label' => 'Git commit author email',
+                    'required' => false,
+                    'help' => 'e.g., blogger@example.com',
+                ]
+            )
         ;
 
         $builder->get('themeVariables')
@@ -72,6 +115,24 @@ class SettingsType extends AbstractType
                 },
                 function ($valueAsString) {
                     return json_decode($valueAsString, true);
+                }
+            ))
+        ;
+        $builder->get('gaTrackingScripts')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($value) {
+                    return '<script type="text/javascript">'."\n".$value."\n".'</script>';
+                },
+                function ($displayValue) {dump($displayValue);
+                    $displayValue = trim($displayValue);
+                    $displayValue = str_replace("\r", '', $displayValue);
+                    $displayValue = substr(
+                        $displayValue,
+                        strlen('<script type="text/javascript">'."\n"),
+                        -strlen("\n".'</script>')
+                    );
+
+                    return $displayValue;
                 }
             ))
         ;
