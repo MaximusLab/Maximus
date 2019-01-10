@@ -25,7 +25,7 @@ class HomepageController extends AbstractController
     {
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
-            ->findBy(['published' => true], ['publishedAt' => 'DESC']);
+            ->getPublishedArticles();
         $articlesPerYear = [];
 
         /** @var Article $article */

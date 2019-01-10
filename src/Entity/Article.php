@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Article data
  *
  * @ORM\Table(name="articles")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Maximus\Repository\ArticleRepository")
  */
 class Article
 {
