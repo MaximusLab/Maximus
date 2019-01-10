@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Tag info
  *
  * @ORM\Table(name="tags")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Maximus\Repository\TagRepository")
  */
 class Tag
 {

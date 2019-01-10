@@ -61,18 +61,9 @@ class TagController extends AbstractController
      */
     public function listAction()
     {
-        $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
-
         $viewData = [
-            'tags' => [],
+            'tags' => $this->getDoctrine()->getRepository(Tag::class)->getArticleCounts(),
         ];
-
-        foreach ($tags as $tag) {
-            $viewData['tags'][] = [
-                'tag' => $tag,
-                'articleCount' => count($tag->getArticles()),
-            ];
-        }
 
         return $this->render('@theme/tags.html.twig', $viewData);
     }
