@@ -10,6 +10,7 @@
 
 namespace Maximus\Controller\Console;
 
+use GitWrapper\GitWrapper;
 use GuzzleHttp\Client;
 use Maximus\Entity\Article;
 use Maximus\Entity\Tag;
@@ -45,6 +46,36 @@ class DeployController extends AbstractController
         ];
 
         return $this->render('console/deploy/index.html.twig', $viewData);
+    }
+
+    /**
+     * Prepare Git Repository config
+     *
+     * @Route("/prepare-git-repository", name="prepare_git_repository", methods={"POST"})
+     *
+     * @param Settings $settings
+     *
+     * @return JsonResponse
+     */
+    public function prepareGitRepository(Settings $settings)
+    {
+        $git = $this->getGit($settings);
+
+        $git->init();
+        $git->clean('-f', '-d');
+
+        try {
+            $git->remote('add', 'origin', $settings->getGitRepositoryUrl());
+        } catch (\Exception $e) {
+        }
+
+        $git->config('user.name', $settings->getGitAuthorName());
+        $git->config('user.email', $settings->getGitAuthorEmail());
+
+        $git->fetch('origin', 'master');
+        $git->checkout('master');
+
+        return new JsonResponse(['success' => true]);
     }
 
     /**
@@ -103,6 +134,37 @@ class DeployController extends AbstractController
             $fs->mkdir($dir);
 
             file_put_contents($filePath, $html);
+        }
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    /**
+     * Push static files to remote (e.g., GitHub)
+     *
+     * @Route("/push", name="push", methods={"POST"})
+     *
+     * @param Settings $settings
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function pushAction(Settings $settings)
+    {
+        $git = $this->getGit($settings);
+        $push = true;
+
+        try {
+            dump($git->add('.'));
+            dump($git->commit('Update at ' . date('Y-m-d H:i:s')));
+        } catch (\Exception $e) {
+            $push = false;
+        }
+
+        if ($push) {
+            try {
+                dump($git->push('origin', 'master'));
+            } catch (\Exception $e) {
+            }
         }
 
         return new JsonResponse(['success' => true]);
@@ -194,5 +256,19 @@ class DeployController extends AbstractController
     private function getDeployDir()
     {
         return $this->getParameter('kernel.project_dir').'/var/deploy';
+    }
+
+    /**
+     * @param Settings $settings
+     *
+     * @return \GitWrapper\GitWorkingCopy
+     */
+    private function getGit(Settings $settings)
+    {
+        $gitWrapper = new GitWrapper($settings->getGitBinaryPath());
+
+        $gitWrapper->setPrivateKey($settings->getGitSSHPrivateKeyPath());
+
+        return $gitWrapper->workingCopy($this->getDeployDir());
     }
 }
