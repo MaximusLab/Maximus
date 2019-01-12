@@ -95,11 +95,11 @@ class Settings
     private $urlPrefix = '';
 
     /**
-     * The file path for the git binary
+     * Git binary path
      *
      * @var string
      */
-    private $gitFilePath = '';
+    private $gitBinaryPath = '';
 
     /**
      * The URL for the git repository
@@ -347,22 +347,23 @@ class Settings
         return $this;
     }
 
+
     /**
      * @return string
      */
-    public function getGitFilePath()
+    public function getGitBinaryPath()
     {
-        return $this->gitFilePath;
+        return $this->gitBinaryPath;
     }
 
     /**
-     * @param string $gitFilePath
+     * @param string $gitBinaryPath
      *
      * @return Settings
      */
-    public function setGitFilePath($gitFilePath)
+    public function setGitBinaryPath($gitBinaryPath)
     {
-        $this->gitFilePath = $gitFilePath;
+        $this->gitBinaryPath = $gitBinaryPath;
 
         return $this;
     }

@@ -71,9 +71,9 @@ class SettingsType extends AbstractType
                     'help' => 'e.g., https://foobar.example.com/',
                 ]
             )
-            ->add('gitFilePath', TextType::class,
+            ->add('gitBinaryPath', TextType::class,
                 [
-                    'label' => 'Git Path',
+                    'label' => 'Git binary path',
                     'required' => false,
                     'help' => 'e.g., C:\Program Files\Git\bin\git.exe',
                 ]
