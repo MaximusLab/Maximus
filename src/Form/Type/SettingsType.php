@@ -38,6 +38,13 @@ class SettingsType extends AbstractType
                     'help' => 'Theme variables is JSON format',
                 ]
             )
+            ->add('themeMenus', TextareaType::class,
+                [
+                    'label' => 'Theme menus',
+                    'required' => false,
+                    'help' => 'Theme variables is JSON format',
+                ]
+            )
             ->add('uploadBasePath', TextType::class,
                 [
                     'label' => 'Upload base path',
@@ -108,16 +115,33 @@ class SettingsType extends AbstractType
             )
         ;
 
-        $builder->get('themeVariables')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($valueAsArray) {
-                    return json_encode($valueAsArray, JSON_UNESCAPED_UNICODE|JSON_BIGINT_AS_STRING|JSON_UNESCAPED_SLASHES);
-                },
-                function ($valueAsString) {
-                    return json_decode($valueAsString, true);
+        $builder->get('themeVariables')->addModelTransformer(new CallbackTransformer(
+            function ($valueAsArray) {
+                return json_encode($valueAsArray, JSON_UNESCAPED_UNICODE|JSON_BIGINT_AS_STRING|JSON_UNESCAPED_SLASHES);
+            },
+            function ($valueAsString) {
+                return json_decode($valueAsString, true);
+            }
+        ));
+        $builder->get('themeMenus')->addModelTransformer(new CallbackTransformer(
+            function ($valueAsArray) {
+                $return = "[\n";
+                $lines = [];
+
+                foreach ($valueAsArray as $menu) {
+                    $menu['route_params'] = (object) $menu['route_params'];
+
+                    $line = json_encode($menu, JSON_UNESCAPED_UNICODE|JSON_BIGINT_AS_STRING|JSON_UNESCAPED_SLASHES);
+                    $line = str_replace(['":', '",', '},'], ['": ', '", ', '}, '], $line);
+                    $lines[] = '  '.$line;
                 }
-            ))
-        ;
+
+                return $return.implode(",\n", $lines)."\n]";
+            },
+            function ($valueAsString) {
+                return json_decode($valueAsString, true);
+            }
+        ));
         $builder->get('gaTrackingScripts')
             ->addModelTransformer(new CallbackTransformer(
                 function ($value) {

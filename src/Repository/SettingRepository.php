@@ -34,8 +34,7 @@ class SettingRepository extends ServiceEntityRepository
         ;
 
         foreach ($rows as $row) {
-            $settings[$row['key']] = @json_decode($row['value'], true);
-            $settings[$row['key']] = is_null($settings[$row['key']]) ? '' : $settings[$row['key']];
+            $settings[$row['key']] = $this->decodeValue($row['key'], $row['value']);
         }
 
         return new Settings($settings);
@@ -55,7 +54,7 @@ class SettingRepository extends ServiceEntityRepository
             $setting = $this->findOneBy(['key' => $key]);
             $setting = $setting instanceof Setting ? $setting : new Setting($key);
             $value = is_null($value) ? '' : $value;
-            $value = json_encode($value);
+            $value = $this->encodeValue($key, $value);
 
             $setting->setValue($value);
 
@@ -65,5 +64,53 @@ class SettingRepository extends ServiceEntityRepository
         $this->_em->flush();
 
         return true;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return string
+     */
+    private function encodeValue($key, $value)
+    {
+        switch ($key) {
+            default:
+                $return = json_encode($value);
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     *
+     * @return mixed
+     */
+    private function decodeValue($key, $value)
+    {
+        switch ($key) {
+            case 'themeVariables':
+                return empty($value) ? [] : @json_decode($value, true);
+            case 'themeMenus':
+                $return = empty($value) ? [] : @json_decode($value, true);
+
+                foreach ($return as &$menu) {
+                    if (!isset($menu['route_params'])) {
+                        $menu['route_params'] = [];
+                    }
+
+                    $menu['route_params'] = (array) $menu['route_params'];
+                }
+
+                return $return;
+        }
+
+        // Default decode process
+        $return = @json_decode($value, true);
+        $return = is_null($return) ? '' : $return;
+
+        return $return;
     }
 }

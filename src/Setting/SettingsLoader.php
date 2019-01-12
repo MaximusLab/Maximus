@@ -67,6 +67,16 @@ class SettingsLoader
             $variables = $this->mergeThemeVariables($variables, $settings->getThemeVariables());
             $menus = (array) $config->get('menus', []);
 
+            foreach ($menus as &$menu) {
+                if (!isset($menu['route_params'])) {
+                    $menu['route_params'] = [];
+                }
+
+                $menu['route_params'] = (array) $menu['route_params'];
+            }
+
+            $menus = $this->mergeThemeMenus($settings->getThemeMenus(), $menus);
+
             $settings->setThemeVariables($variables);
             $settings->setThemeVersion($config->get('version'));
             $settings->setThemeMenus($menus);
@@ -124,5 +134,26 @@ class SettingsLoader
         }
 
         return $config1;
+    }
+
+    /**
+     * Merge theme variables
+     *
+     * @param array $menu1
+     * @param array $menu2
+     *
+     * @return array
+     */
+    private function mergeThemeMenus(array $menu1 = [], array $menu2 = [])
+    {
+        $menu1 = array_combine(array_column($menu1, 'route_name'), $menu1);
+        $menu2 = array_combine(array_column($menu2, 'route_name'), $menu2);
+
+        foreach ($menu2 as $routeName => $menu) {
+            // Don't overwrite the original menu from theme.json
+            $menu1[$routeName] = $menu2[$routeName];
+        }
+
+        return array_values($menu1);
     }
 }
