@@ -62,11 +62,20 @@ class DeployController extends AbstractController
         $deployThemeDir = $this->getDeployDir().'/theme/'.$settings->getTheme();
         $uploadDir = $this->getParameter('kernel.project_dir').'/public/upload';
         $deployUploadDir = $this->getDeployDir().'/upload';
+        $assetsDir = $this->getParameter('kernel.project_dir').'/public/assets';
+        $deployAssetsDir = $this->getDeployDir().'/assets';
 
         $fs = new Filesystem();
 
-        $fs->mirror($themeDir, $deployThemeDir);
-        $fs->mirror($uploadDir, $deployUploadDir);
+        if (is_dir($themeDir)) {
+            $fs->mirror($themeDir, $deployThemeDir);
+        }
+        if (is_dir($uploadDir)) {
+            $fs->mirror($uploadDir, $deployUploadDir);
+        }
+        if (is_dir($assetsDir)) {
+            $fs->mirror($assetsDir, $deployAssetsDir);
+        }
 
         return new JsonResponse(['success' => true]);
     }
