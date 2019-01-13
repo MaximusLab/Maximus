@@ -56,4 +56,31 @@ class MediaController extends AbstractController
 
         return new JsonResponse(['success' => false, 'error' => ['message' => 'No file uploaded!']]);
     }
+
+    /**
+     * Delete uploaded article background image
+     *
+     * @param Article $article
+     *
+     * @return JsonResponse
+     *
+     * @Route("/delete-article-background-image/{id}", name="delete_article_background_image",
+     *     requirements={"id": "\d+"}, methods={"POST"})
+     */
+    public function deleteArticleBackgroundImage(Article $article)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $filePath = $this->getParameter('kernel.project_dir').'/public/'.$article->getBackgroundImagePath();
+
+        $article->setBackgroundImagePath('');
+
+        $em->persist($article);
+        $em->flush();
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        return new JsonResponse(['success' => true]);
+    }
 }

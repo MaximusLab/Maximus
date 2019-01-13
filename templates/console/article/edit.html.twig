@@ -124,11 +124,19 @@ a.markdown-editor-uploader {
             </div>
         </div>
 
-        {{ form_row(form.backgroundImagePath, {attr:{placeholder: article.backgroundImagePath|default('Choose a background images...')}}) }}
+        {{ form_row(form.backgroundImagePath, {attr:{placeholder: article.backgroundImagePath|default('Choose a background image...')}}) }}
 
         <div class="form-group row {% if article.backgroundImagePath is empty %}d-none{% endif %}" id="article-background-image-preview">
             <div class="offset-sm-2 col-sm-10">
-                <img src="{{ asset(article.backgroundImagePath) }}" alt="background image" />
+                <div>
+                    <img src="{{ asset(article.backgroundImagePath) }}" alt="background image" />
+                </div>
+                <div class="text-right pt-1">
+                    <button type="button" class="btn btn-outline-danger" id="delete-background-image-button"
+                            data-article-id="{{ article.id }}" data-api-url="{{ path('console_media_delete_article_background_image', {id: article.id}) }}">
+                        <small>Delete Background Image</small>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -200,6 +208,31 @@ a.markdown-editor-uploader {
             showPreviewImage(file, $('#article-background-image-preview img:first'));
             $('#article-background-image-preview').removeClass('d-none');
         });
+    });
+
+    $('#delete-background-image-button').click(function() {
+        if ($('#article_backgroundImagePath').siblings('label').html().match(/Choose a background image\.\.\./)) {
+            resetBackgroundImagePath();
+            return;
+        }
+
+        if (confirm('Do you want to delete the uploaded background image?')) {
+            var $button = $(this);
+            var articleId = $.trim($button.data('article-id'));
+
+            if (!articleId.match(/^[0-9]+$/) || articleId <= 0) {
+                return;
+            }
+
+            $.post($button.data('api-url'), function(response) {
+                if (response.success) {
+                    resetBackgroundImagePath();
+                    alert('Delete successfully!');
+                } else {
+                    alert('Delete failed!');
+                }
+            }, 'json');
+        }
     });
 
     $articleMarkdownContent.on('dragenter dragover dragleave drop', function(e) {
@@ -289,6 +322,19 @@ a.markdown-editor-uploader {
                 callback();
             }
         });
+    }
+
+    function resetBackgroundImagePath()
+    {
+        var $input = $('#article_backgroundImagePath');
+
+        $input.siblings('label').html('Choose a background image...');
+
+        $input.val('');
+        $input.attr('placeholder', '');
+        $input.replaceWith($input.clone(true));
+
+        $('#article-background-image-preview').addClass('d-none');
     }
 </script>
 {% endblock javascripts %}
