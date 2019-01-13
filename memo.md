@@ -15,9 +15,15 @@ composer require symfony/validator doctrine/annotations
 composer require knplabs/knp-menu-bundle "^2.0"
 composer require symfony/debug-bundle --dev
 composer require symfony/webpack-encore-pack
+composer require symfony/yaml
 composer require guzzlehttp/guzzle
 composer require cpliakas/git-wrapper
 
 # Run encore dev
 npm run dev
 ```
+
+## TODO List
+
+- Delete unpublished articles, tags, and assets
+- Delete unused media files after save an article
