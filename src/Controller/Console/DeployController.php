@@ -243,6 +243,14 @@ class DeployController extends AbstractController
         $path = empty($urlInfo['path']) ? '' : $urlInfo['path'];
         $path = '/'.trim($path, ' /');
 
+        if (strlen($path) < strlen($prefixPath)) {
+            $path = $prefixPath;
+        }
+
+        if ($path === $prefixPath) {
+            return '';
+        }
+
         if (0 === strpos($prefixPath, $path)) {
             $path = substr($path, strlen($prefixPath));
             $path = '/'.trim($path, ' /');
