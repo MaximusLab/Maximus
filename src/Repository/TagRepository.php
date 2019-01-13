@@ -25,6 +25,7 @@ class TagRepository extends EntityRepository
         $rows = $this->createQueryBuilder('tag')
             ->leftJoin('tag.articles', 'article')
             ->select(['tag.title', 'COUNT(article.id) AS count'])
+            ->where('article.published = true')
             ->groupBy('tag.id')
             ->orderBy('tag.title', 'ASC')
             ->getQuery()

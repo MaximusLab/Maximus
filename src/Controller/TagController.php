@@ -32,7 +32,7 @@ class TagController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $articles = $tag->getArticles();
+        $articles = $this->getDoctrine()->getRepository(Article::class)->getPublishedArticlesByTagTitle($tag->getTitle());
         $articlesPerYear = [];
 
         /** @var Article $article */
