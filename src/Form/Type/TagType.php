@@ -28,6 +28,13 @@ class TagType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, ['label' => 'Title', 'attr' => ['placeholder' => 'Enter a tag title']])
+            ->add('alias', TextType::class, [
+                'label' => 'Alias',
+                'attr' => [
+                    'placeholder' => 'Enter a tag title alias'
+                ],
+                'help' => 'Alias should be lower-case and english/number/hyphen only ([a-z0-9-])'
+            ])
         ;
     }
 

@@ -18,12 +18,14 @@
         <tr>
             <th>ID</th>
             <th>Title</th>
+            <th>Alias</th>
             <th>Operation</th>
         </tr>
     {% for tag in tags %}
         <tr>
             <td>{{ tag.id }}</td>
             <td>{{ tag.title }}</td>
+            <td>{{ tag.alias }}</td>
             <td>
                 <a href="{{ path('console_tag_edit', {'id': tag.id}) }}" class="btn btn-primary">Edit</a>
             </td>

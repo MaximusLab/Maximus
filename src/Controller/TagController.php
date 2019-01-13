@@ -18,21 +18,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class TagController extends AbstractController
 {
     /**
-     * @param string $tag Tag name
+     * @param string $alias Tag title alias
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/tag/{tag}", name="tag")
+     * @Route("/tag/{alias}", name="tag")
      */
-    public function tagAction(string $tag)
+    public function tagAction($alias)
     {
-        $tag = $this->getDoctrine()->getRepository(Tag::class)->findOneBy(['title' => $tag]);
+        $tag = $this->getDoctrine()->getRepository(Tag::class)->findOneBy(['alias' => $alias]);
 
         if (!$tag instanceof Tag) {
             return $this->redirectToRoute('homepage');
         }
 
-        $articles = $this->getDoctrine()->getRepository(Article::class)->getPublishedArticlesByTagTitle($tag->getTitle());
+        $articles = $this->getDoctrine()->getRepository(Article::class)
+            ->getPublishedArticlesByTagTitle($tag->getAlias());
         $articlesPerYear = [];
 
         /** @var Article $article */

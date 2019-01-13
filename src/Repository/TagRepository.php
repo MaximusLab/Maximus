@@ -22,31 +22,28 @@ class TagRepository extends EntityRepository
      */
     public function getArticleCounts()
     {
-        $rows = $this->createQueryBuilder('tag')
+        return $this->createQueryBuilder('tag')
             ->leftJoin('tag.articles', 'article')
-            ->select(['tag.title', 'COUNT(article.id) AS count'])
+            ->select(['tag.title', 'COUNT(article.id) AS count', 'tag.alias'])
             ->where('article.published = true')
             ->groupBy('tag.id')
             ->orderBy('tag.title', 'ASC')
             ->getQuery()
             ->getArrayResult()
         ;
-
-        return array_combine(array_column($rows, 'title'), array_column($rows, 'count'));
     }
 
     /**
      * @return array
      */
-    public function getTitles()
+    public function getAliases()
     {
         $rows = $this->createQueryBuilder('tag')
-            ->select(['tag.title'])
-            ->orderBy('tag.title', 'ASC')
+            ->select(['tag.alias'])
             ->getQuery()
             ->getArrayResult()
         ;
 
-        return array_column($rows, 'title');
+        return array_column($rows, 'alias');
     }
 }

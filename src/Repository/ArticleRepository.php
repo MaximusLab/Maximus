@@ -64,17 +64,17 @@ class ArticleRepository extends EntityRepository
     }
 
     /**
-     * @param string $tagTitle
+     * @param string $alias
      *
      * @return Collection|Article[]
      */
-    public function getPublishedArticlesByTagTitle($tagTitle)
+    public function getPublishedArticlesByTagTitle($alias)
     {
         return $this->createQueryBuilder('article')
             ->leftJoin('article.tags', 'tag')
-            ->where('tag.title = :tagTitle')
+            ->where('tag.alias = :alias')
             ->andWhere('article.published = true')
-            ->setParameter('tagTitle', $tagTitle)
+            ->setParameter('alias', $alias)
             ->orderBy('tag.title', 'ASC')
             ->getQuery()
             ->getResult()

@@ -13,6 +13,7 @@ namespace Maximus\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Tag info
@@ -41,6 +42,17 @@ class Tag
      * @ORM\Column(name="title", type="string", length=128, options={"comment":"Tag title"})
      */
     private $title;
+
+    /**
+     * Tag title alias
+     *
+     * @var string
+     *
+     * @ORM\Column(name="alias", type="string", length=128, options={"comment":"Tag title alias"})
+     *
+     * @Assert\Regex("/^[a-z0-9-]+$/")
+     */
+    private $alias;
 
     /**
      * @ORM\ManyToMany(targetEntity="Maximus\Entity\Article", inversedBy="tags")
@@ -103,6 +115,26 @@ class Tag
     public function addArticle(Article $article)
     {
         $this->getArticles()->add($article);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @param string $alias
+     *
+     * @return Tag
+     */
+    public function setAlias($alias)
+    {
+        $this->alias = $alias;
 
         return $this;
     }

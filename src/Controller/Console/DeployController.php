@@ -215,11 +215,11 @@ class DeployController extends AbstractController
     private function getAllTagUrls()
     {
         $tagRepo = $this->getDoctrine()->getRepository(Tag::class);
-        $tagTitles = $tagRepo->getTitles();
+        $tagAliases = $tagRepo->getAliases();
         $urls = [];
 
-        foreach ($tagTitles as $tagTitle) {
-            $url = $this->generateUrl('tag', ['tag' => $tagTitle]);
+        foreach ($tagAliases as $alias) {
+            $url = $this->generateUrl('tag', ['alias' => $alias]);
 
             $urls[] = $url;
         }
