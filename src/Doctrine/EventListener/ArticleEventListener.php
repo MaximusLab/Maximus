@@ -106,7 +106,8 @@ class ArticleEventListener
         }
 
         if ($file instanceof File) {
-            $imagePath = $this->uploader->upload($file, Article::MEDIA_UPLOAD_PATH);
+            $dir = Article::BACKGROUND_IMAGE_UPLOAD_PATH.'/'.$article->getId();
+            $imagePath = $this->uploader->upload($file, $dir);
 
             $article->setBackgroundImagePath($imagePath);
         }
