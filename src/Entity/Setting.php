@@ -54,7 +54,7 @@ class Setting
      *
      * @param string $key
      */
-    public function __construct(string $key)
+    public function __construct($key)
     {
         $this->key = $key;
     }
@@ -80,7 +80,7 @@ class Setting
      *
      * @return Setting
      */
-    public function setKey(string $key)
+    public function setKey($key)
     {
         $this->key = $key;
 

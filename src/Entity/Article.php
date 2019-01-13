@@ -154,7 +154,7 @@ class Article
      *
      * @return Article
      */
-    public function setTitle(string $title)
+    public function setTitle($title)
     {
         $this->title = $title;
 
@@ -174,7 +174,7 @@ class Article
      *
      * @return Article
      */
-    public function setAlias(string $alias)
+    public function setAlias($alias)
     {
         $alias = preg_replace('/[^a-zA-Z0-9-]/u', '-', $alias);
 
@@ -196,7 +196,7 @@ class Article
      *
      * @return Article
      */
-    public function setBackgroundImagePath(?string $backgroundImagePath)
+    public function setBackgroundImagePath($backgroundImagePath)
     {
         $this->backgroundImagePath = $backgroundImagePath;
 
@@ -216,7 +216,7 @@ class Article
      *
      * @return Article
      */
-    public function setMarkdownContent(string $markdownContent)
+    public function setMarkdownContent($markdownContent)
     {
         $this->markdownContent = $markdownContent;
 
@@ -236,7 +236,7 @@ class Article
      *
      * @return Article
      */
-    public function setHtmlContent(string $htmlContent)
+    public function setHtmlContent($htmlContent)
     {
         $this->htmlContent = $htmlContent;
 
@@ -336,7 +336,7 @@ class Article
      *
      * @return Article
      */
-    public function setPublished(bool $published)
+    public function setPublished($published)
     {
         $this->published = $published;
 
