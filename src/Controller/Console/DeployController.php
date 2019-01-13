@@ -155,15 +155,15 @@ class DeployController extends AbstractController
         $push = true;
 
         try {
-            dump($git->add('.'));
-            dump($git->commit('Update at ' . date('Y-m-d H:i:s')));
+            $git->add('.');
+            $git->commit('Update at ' . date('Y-m-d H:i:s'));
         } catch (\Exception $e) {
             $push = false;
         }
 
         if ($push) {
             try {
-                dump($git->push('origin', 'master'));
+                $git->push('origin', 'master');
             } catch (\Exception $e) {
             }
         }

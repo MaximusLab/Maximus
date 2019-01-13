@@ -35,14 +35,14 @@ function generateHtmlFiles()
 }
 
 $deployButton.on('click', function () {
-    let parameterUrl = $deployButton.data('parameter-url');console.log(parameterUrl);
+    let parameterUrl = $deployButton.data('parameter-url');
 
     $('#before-deploy-content').addClass('d-none');
     $('#deploying-content').removeClass('d-none');
     $('#close-button').addClass('d-none');
 
     $.getJSON(parameterUrl, function(response) {
-        parameters = response;console.log(parameters);
+        parameters = response;
 
         $.post(parameters.prepareGitRepoUrl, function(response) {
             if (response.success) {
