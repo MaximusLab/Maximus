@@ -11,7 +11,6 @@
 namespace Maximus\Controller\Console;
 
 use GitWrapper\GitWrapper;
-use GuzzleHttp\Client;
 use Maximus\Entity\Article;
 use Maximus\Entity\Tag;
 use Maximus\Setting\Settings;
@@ -19,9 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @Route("/console/deploy", name="console_deploy_")
@@ -29,23 +26,27 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class DeployController extends AbstractController
 {
     /**
-     * @Route("/", name="index")
+     * Prepare parameters for deploying
+     *
+     * @Route("/parameters", name="parameters", methods={"GET"})
      *
      * @param Settings $settings
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Settings $settings)
+    public function parameters(Settings $settings)
     {
-        $viewData = [
-            'urls' => array_merge(
+        return new JsonResponse([
+            'htmlUrls' => array_merge(
                 $this->getAllMenuUrls($settings),
                 $this->getAllArticleUrls(),
                 $this->getAllTagUrls()
             ),
-        ];
-
-        return $this->render('console/deploy/index.html.twig', $viewData);
+            'copyAssetUrl' => $this->generateUrl('console_deploy_copy_assets'),
+            'generateFileUrl' => $this->generateUrl('console_deploy_generate_file'),
+            'prepareGitRepoUrl' => $this->generateUrl('console_deploy_prepare_git_repository'),
+            'pushUrl' => $this->generateUrl('console_deploy_push'),
+        ]);
     }
 
     /**
@@ -148,7 +149,7 @@ class DeployController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function pushAction(Settings $settings)
+    public function push(Settings $settings)
     {
         $git = $this->getGit($settings);
         $push = true;

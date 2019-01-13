@@ -1,12 +1,12 @@
 let $ = require('jquery');
-let $generate = $('#generate');
-let data = $generate.data('data');
+let $deployButton = $('#deploy-button');
+let parameters = {};
 let generating = false;
 
 function generateHtmlFiles()
 {
     if (generating) {
-        if (data.urls.length) {
+        if (parameters.htmlUrls.length) {
             setTimeout(generateHtmlFiles, 1000);
         }
         return;
@@ -14,23 +14,44 @@ function generateHtmlFiles()
 
     generating = true;
 
-    let url = data.urls.shift();
+    let url = parameters.htmlUrls.shift();
 
     $.get(url, function(html) {
-        $.post(data.generateFileUrl, {url:url, html:html}, function() {
+        $.post(parameters.generateFileUrl, {url:url, html:html}, function() {
             generating = false;
 
-            if (!data.urls.length) {
-                alert('Generating Done!');
+            if (!parameters.htmlUrls.length) {
+                $.post(parameters.pushUrl, function() {
+                    // Display complete messages
+                    $('#deploying-content').addClass('d-none');
+                    $('#after-deploy-content').removeClass('d-none');
+                    $('#close-button').removeClass('d-none');
+                });
             }
-        });
+        }, 'json');
     });
 
     setTimeout(generateHtmlFiles, 1000);
 }
 
-$generate.on('click', function () {
-    $.post(data.copyAssetUrl, function() {
-        generateHtmlFiles();
+$deployButton.on('click', function () {
+    let parameterUrl = $deployButton.data('parameter-url');console.log(parameterUrl);
+
+    $('#before-deploy-content').addClass('d-none');
+    $('#deploying-content').removeClass('d-none');
+    $('#close-button').addClass('d-none');
+
+    $.getJSON(parameterUrl, function(response) {
+        parameters = response;console.log(parameters);
+
+        $.post(parameters.prepareGitRepoUrl, function(response) {
+            if (response.success) {
+                $.post(parameters.copyAssetUrl, function(response) {
+                    if (response.success) {
+                        generateHtmlFiles();
+                    }
+                });
+            }
+        }, 'json');
     });
 });

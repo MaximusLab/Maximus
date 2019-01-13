@@ -12,6 +12,9 @@
 {% block body %}
     <p>
         <a href="{{ path('console_article_create') }}" class="btn btn-success">Create</a>
+        <button class="btn btn-info" data-toggle="modal" data-target="#deploy-modal" data-keyboard="false" data-backdrop="static">
+            Deploy
+        </button>
     </p>
 
     <table class="table table-bordered">
@@ -29,10 +32,11 @@
                 <td>{{ article.title }}</td>
                 <td>{{ article.author.name }}</td>
                 <td>
-                {% if article.publishedAt is empty %}
-                    <span class="text-danger">Draft</span>
-                {% else %}
+                {% if article.publishedAt is not empty %}
                     {{ article.publishedAt.format('Y-m-d H:i:s') }}
+                {% endif %}
+                {% if not article.published %}
+                    <span class="text-danger">(Draft)</span>
                 {% endif %}
                 </td>
                 <td>{{ article.createdAt.format('Y-m-d') }}</td>
@@ -44,4 +48,63 @@
             </tr>
         {% endfor %}
     </table>
+
+    <!-- Deploy Modal -->
+    <div class="modal fade" id="deploy-modal" tabindex="-1" role="dialog" aria-labelledby="deploy-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deploy-modal-title">
+                        Deploy to remote
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="before-deploy-content">
+                        <div class="text-center">
+                            Do you want to deploy to remote git repository?
+                            <br><br>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block" id="deploy-button"
+                                    data-parameter-url="{{ path('console_deploy_parameters') }}" >
+                                Yes, process the deployment
+                            </button>
+                        </div>
+                    </div>
+                    <div id="deploying-content" class="d-none">
+                        <div class="text-center">
+                            Deploying to remote git repository, please wait...
+                            <br><br>
+                        </div>
+                        <div class="fa-10x text-center">
+                            <i class="fas fa-sync fa-spin"></i>
+                        </div>
+                    </div>
+                    <div id="after-deploy-content" class="text-success d-none">
+                        <div class="text-center">
+                            Congratulation! Deployment is complete!
+                        </div>
+                        <div class="fa-10x text-center">
+                            <i class="far fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    $('#deploy-modal').on('hidden.bs.modal', function (e) {
+        $('#before-deploy-content').removeClass('d-none');
+        $('#close-button').removeClass('d-none');
+        $('#deploying-content').addClass('d-none');
+        $('#after-deploy-content').addClass('d-none');
+    });
+</script>
+<script src="{{ asset('build/console/deploy.js') }}" type="text/javascript"></script>
 {% endblock %}
