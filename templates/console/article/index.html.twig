@@ -44,6 +44,9 @@
                     <a href="{{ path('console_article_edit', {'id': article.id}) }}" class="btn btn-primary btn-sm">
                         Edit
                     </a>
+                    <a href="{{ path('article', article.liveViewUrlParams) }}" class="btn btn-primary btn-sm" target="_blank">
+                        Live View
+                    </a>
                 </td>
             </tr>
         {% endfor %}

@@ -406,4 +406,17 @@ class Article
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getLiveViewUrlParams()
+    {
+        return [
+            'year' => $this->getPublishedYear(),
+            'month' => $this->getPublishedMonth(),
+            'day' => $this->getPublishedDay(),
+            'alias' => $this->getAlias(),
+        ];
+    }
 }

@@ -28,6 +28,9 @@
             <td>{{ tag.alias }}</td>
             <td>
                 <a href="{{ path('console_tag_edit', {'id': tag.id}) }}" class="btn btn-primary">Edit</a>
+                <a href="{{ path('tag', {'alias': tag.alias}) }}" class="btn btn-primary btn-sm" target="_blank">
+                    Live View
+                </a>
             </td>
         </tr>
     {% endfor %}

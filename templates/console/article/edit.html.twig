@@ -90,6 +90,13 @@ a.markdown-editor-uploader {
                                     Preview
                                 </a>
                             </li>
+                            {% if article.id is not empty %}
+                            <li class="nav-item">
+                                <a href="{{ path('article', article.liveViewUrlParams) }}" class="nav-link link-black" target="_blank">
+                                    Live View
+                                </a>
+                            </li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="tab-content">
