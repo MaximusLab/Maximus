@@ -55,11 +55,7 @@ class SettingsLoader
         $settings = $this->settingsRepo->getSettings();
 
         // Load theme configuration file, and overwrite with configuration in database.
-        $filePath = sprintf(
-            '%s/themes_installed/%s/theme.json',
-            $this->projectDir,
-            $settings->getTheme()
-        );
+        $filePath = sprintf('%s/themes_installed/%s/theme.json', $this->projectDir, $settings->getTheme());
 
         if (file_exists($filePath)) {
             $config = new ParameterBag(@json_decode(file_get_contents($filePath), true));

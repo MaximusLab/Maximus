@@ -131,6 +131,7 @@ class SettingsType extends AbstractType
                 return json_decode($valueAsString, true);
             }
         ));
+
         $builder->get('themeMenus')->addModelTransformer(new CallbackTransformer(
             function ($valueAsArray) {
                 $return = "[\n";
@@ -150,24 +151,23 @@ class SettingsType extends AbstractType
                 return json_decode($valueAsString, true);
             }
         ));
-        $builder->get('gaTrackingScripts')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($value) {
-                    return '<script type="text/javascript">'."\n".$value."\n".'</script>';
-                },
-                function ($displayValue) {dump($displayValue);
-                    $displayValue = trim($displayValue);
-                    $displayValue = str_replace("\r", '', $displayValue);
-                    $displayValue = substr(
-                        $displayValue,
-                        strlen('<script type="text/javascript">'."\n"),
-                        -strlen("\n".'</script>')
-                    );
 
-                    return $displayValue;
-                }
-            ))
-        ;
+        $builder->get('gaTrackingScripts')->addModelTransformer(new CallbackTransformer(
+            function ($value) {
+                return '<script type="text/javascript">'."\n".$value."\n".'</script>';
+            },
+            function ($displayValue) {
+                $displayValue = trim($displayValue);
+                $displayValue = str_replace("\r", '', $displayValue);
+                $displayValue = substr(
+                    $displayValue,
+                    strlen('<script type="text/javascript">'."\n"),
+                    -strlen("\n".'</script>')
+                );
+
+                return $displayValue;
+            }
+        ));
     }
 
     /**
