@@ -45,10 +45,18 @@ class SettingsType extends AbstractType
                     'help' => 'Theme variables is JSON format',
                 ]
             )
-            ->add('uploadBasePath', TextType::class,
+            ->add('webRoot', TextType::class,
                 [
-                    'label' => 'Upload base path',
+                    'label' => 'Web root directory',
                     'required' => false,
+                    'help' => 'Should be an absolute path',
+                ]
+            )
+            ->add('uploadPath', TextType::class,
+                [
+                    'label' => 'Upload path',
+                    'required' => false,
+                    'help' => 'Should be a relative path, relative to web root directory (e.g. /upload)',
                 ]
             )
             ->add('gaTrackingId', TextType::class,

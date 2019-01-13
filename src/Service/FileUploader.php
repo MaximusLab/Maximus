@@ -21,9 +21,9 @@ use Symfony\Component\HttpFoundation\File\File;
 class FileUploader
 {
     /**
-     * @var string
+     * @var Settings
      */
-    private $baseDirectory;
+    private $settings;
 
     /**
      * FileUploader constructor.
@@ -32,7 +32,7 @@ class FileUploader
      */
     public function __construct(Settings $settings)
     {
-        $this->baseDirectory = $settings->getUploadBasePath();
+        $this->settings = $settings;
     }
 
     /**
@@ -45,8 +45,8 @@ class FileUploader
     {
         $fileName = md5_file($file->getRealPath()).'.'.$file->guessExtension();
         $dir = '/'.trim($dir, '/ ');
-        $filePath = $dir.'/'.substr($fileName, 0, 2);
-        $targetDirectory = $this->baseDirectory.$filePath;
+        $filePath = $this->settings->getUploadPath().$dir.'/'.substr($fileName, 0, 2);
+        $targetDirectory = $this->settings->getWebRoot().$filePath;
         $fullFilePath = $targetDirectory.'/'.$fileName;
 
         if (!file_exists($fullFilePath)) {

@@ -82,9 +82,8 @@ class SettingsLoader
             $settings->setThemeMenus($menus);
         }
 
-        // Setup default value for "upload base path"
-        if (empty($settings->getUploadBasePath())) {
-            $settings->setUploadBasePath($this->projectDir.'/public/upload');
+        if (empty($settings->getWebRoot())) {
+            $settings->setWebRoot(str_replace('\\', '/', $this->projectDir).'/public');
         }
 
         return $settings;

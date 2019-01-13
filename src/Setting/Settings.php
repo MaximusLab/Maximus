@@ -60,11 +60,18 @@ class Settings
     private $themeMenus = [];
 
     /**
-     * Upload base path
+     * Web root directory (absolute path)
      *
      * @var string
      */
-    private $uploadBasePath = '';
+    private $webRoot = '';
+
+    /**
+     * Upload base path (relative path, relative to web root directory)
+     *
+     * @var string
+     */
+    private $uploadPath = '/upload';
 
     /**
      * Google Analytics ID
@@ -218,9 +225,41 @@ class Settings
     /**
      * @return string
      */
-    public function getUploadBasePath()
+    public function getWebRoot()
     {
-        return $this->uploadBasePath;
+        return $this->webRoot;
+    }
+
+    /**
+     * @param string $webRoot
+     *
+     * @return Settings
+     */
+    public function setWebRoot($webRoot)
+    {
+        $this->webRoot = $webRoot;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadPath()
+    {
+        return $this->uploadPath;
+    }
+
+    /**
+     * @param string $uploadPath
+     *
+     * @return Settings
+     */
+    public function setUploadPath($uploadPath)
+    {
+        $this->uploadPath = '/'.trim($uploadPath, "/ \t\n\r\0\x0B");
+
+        return $this;
     }
 
     /**
@@ -251,18 +290,6 @@ class Settings
 
             $this->themeMenus[] = $menu;
         }
-
-        return $this;
-    }
-
-    /**
-     * @param string $uploadBasePath
-     *
-     * @return Settings
-     */
-    public function setUploadBasePath($uploadBasePath)
-    {
-        $this->uploadBasePath = $uploadBasePath;
 
         return $this;
     }
