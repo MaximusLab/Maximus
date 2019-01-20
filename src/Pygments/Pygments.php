@@ -49,6 +49,10 @@ class Pygments
         if ($lexer) {
             $command[] = '-l';
             $command[] = $lexer;
+
+            if (false !== strpos($lexer, ':')) {
+                $command[] = '-x';
+            }
         } else {
             $command[] = '-g';
         }
@@ -122,6 +126,28 @@ class Pygments
         $output = $this->getOutput(new Process($command));
 
         return $this->parseList($output);
+    }
+
+    /**
+     * Gets a lexer from file
+     *
+     * @param string $filename Lexer filename (e.g. terminal.py)
+     * @param string $lexer    Lexer Name (e.g. terminal)
+     *
+     * @return string
+     */
+    public function getLexerFromFile($filename, $lexer)
+    {
+        $filePath = __DIR__.'/lexers/'.$filename;
+
+        if (!file_exists($filePath)) {
+            throw new \InvalidArgumentException('Lexer file "'.$filename.'" is not exists!');
+        }
+
+        $filePath = str_replace('\\', '/', realpath($filePath));
+        $lexerMethod = ucfirst($lexer).'Lexer';
+
+        return $filePath.':'.$lexerMethod;
     }
 
     /**

@@ -199,6 +199,10 @@ a.markdown-editor-uploader {
         $.post(parserUrl, {markdownContent: markdownContent}, function(html) {
             $preview.html(html);
             $loading.addClass('d-none');
+
+            [].forEach.call(document.querySelectorAll('.gp'), function (gp) {
+                gp.dataset.content = gp.textContent;
+            });
         });
     });
 

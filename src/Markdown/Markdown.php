@@ -23,11 +23,18 @@ class Markdown extends MarkdownExtra
     public $table_align_class_tmpl = 'text-%%';
 
     /**
+     * @var Pygments
+     */
+    private $pygments;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct()
+    public function __construct(Pygments $pygments)
     {
         parent::__construct();
+
+        $this->pygments = $pygments;
 
         $this->initialCodeBlockContentFunc();
     }
@@ -109,7 +116,6 @@ class Markdown extends MarkdownExtra
     private function initialCodeBlockContentFunc()
     {
         $this->code_block_content_func = function($code, $language) {
-            $pygments = new Pygments();
             $options = [
                 'encoding' => 'utf-8',
                 'startinline' => true,
@@ -172,9 +178,14 @@ ICON;
                     $code = $this->runBlockGamut($code);
 
                     return $this->hashBlock($code);
+
+                case 'terminal':
+                    $lexer = $this->pygments->getLexerFromFile('terminal.py', 'terminal');
+
+                    return $this->pygments->highlight($code, $lexer, 'html', $options);
             }
 
-            return $pygments->highlight($code, $language, 'html', $options);
+            return $this->pygments->highlight($code, $language, 'html', $options);
         };
     }
 }
