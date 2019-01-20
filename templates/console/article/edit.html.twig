@@ -110,7 +110,10 @@ a.markdown-editor-uploader {
                                     format
                                 </div>
                                 <div class="float-right">
-                                    <a href="javascript:void(0);" id="markdown-editor-uploader" data-upload-url="{{ path('console_media_upload') }}">
+                                    <a href="javascript:void(0);" id="markdown-editor-uploader"
+                                       data-upload-url="{{ path('console_media_upload') }}"
+                                       data-upload-dir="{{ constant('\Maximus\Entity\Article::MEDIA_UPLOAD_PATH') }}"
+                                    >
                                         <i class="fas fa-file-upload"></i>
                                         Upload a file
                                     </a>
@@ -308,11 +311,13 @@ a.markdown-editor-uploader {
     function uploadToArticleMarkdownContent(files, callback)
     {
         var uploadUrl = $('#markdown-editor-uploader').data('upload-url');
+        var uploadDir = $('#markdown-editor-uploader').data('upload-dir');
         var data = new FormData();
 
         for (var i = 0, len = files.length; i < len; ++i) {
             data.append('files[]', files[i]);
         }
+        data.append('dir', uploadDir);
 
         $.ajax({
             url: uploadUrl,

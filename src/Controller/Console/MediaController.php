@@ -15,6 +15,7 @@ use Maximus\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,6 +39,7 @@ class MediaController extends AbstractController
     {
         $form = $this->container->get('form.factory')->createNamedBuilder('', FormType::class)
             ->add('files', FileType::class, ['multiple' => true])
+            ->add('dir', TextType::class)
             ->getForm()
         ;
 
@@ -48,7 +50,7 @@ class MediaController extends AbstractController
             $urls = [];
 
             foreach ($data['files'] as $file) {
-                $urls[] = $uploader->upload($file, Article::MEDIA_UPLOAD_PATH);
+                $urls[] = $uploader->upload($file, $data['dir']);
             }
 
             return new JsonResponse(['success' => true, 'data' => ['urls' => $urls]]);

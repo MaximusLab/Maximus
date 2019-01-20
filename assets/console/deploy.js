@@ -17,7 +17,7 @@ function generateHtmlFiles()
     let url = parameters.htmlUrls.shift();
 
     $.get(url, function(html) {
-        $.post(parameters.generateFileUrl, {url:url, html:html}, function() {
+        $.post(parameters.generateFileUrl, {url:url, html:html}, function(response) {
             generating = false;
 
             if (!parameters.htmlUrls.length) {
@@ -31,7 +31,9 @@ function generateHtmlFiles()
         }, 'json');
     });
 
-    setTimeout(generateHtmlFiles, 1000);
+    if (parameters.htmlUrls.length > 0) {
+        setTimeout(generateHtmlFiles, 1000);
+    }
 }
 
 $deployButton.on('click', function () {
@@ -43,7 +45,6 @@ $deployButton.on('click', function () {
 
     $.getJSON(parameterUrl, function(response) {
         parameters = response;
-
         $.post(parameters.prepareGitRepoUrl, function(response) {
             if (response.success) {
                 $.post(parameters.copyAssetUrl, function(response) {

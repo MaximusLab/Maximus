@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Article
 {
-    const MEDIA_UPLOAD_PATH = '/media';
+    const MEDIA_UPLOAD_PATH = '/article/media';
     const BACKGROUND_IMAGE_UPLOAD_PATH = '/article/background';
 
     /**
