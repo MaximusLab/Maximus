@@ -203,7 +203,7 @@ a.markdown-editor-uploader {
             $preview.html(html);
             $loading.addClass('d-none');
 
-            [].forEach.call(document.querySelectorAll('.gp'), function (gp) {
+            [].forEach.call(document.querySelectorAll('.gp, .c1'), function (gp) {
                 gp.dataset.content = gp.textContent;
             });
         });
