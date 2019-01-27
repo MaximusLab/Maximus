@@ -50,7 +50,7 @@ class Markdown extends MarkdownExtra
         $classes = ['code-block'];
 
         if ($this->code_block_content_func) {
-            $codeBlock = call_user_func($this->code_block_content_func, $codeBlock, $className);
+            $codeBlock = call_user_func($this->code_block_content_func, $codeBlock, $className, $attrs);
         } else {
             $codeBlock = htmlspecialchars($codeBlock, ENT_NOQUOTES);
         }
@@ -112,7 +112,7 @@ class Markdown extends MarkdownExtra
      */
     private function initialCodeBlockContentFunc()
     {
-        $this->code_block_content_func = function($code, $language) {
+        $this->code_block_content_func = function($code, $language, $attrs) {
             $options = [
                 'encoding' => 'utf-8',
                 'startinline' => true,
@@ -180,6 +180,36 @@ ICON;
                     $lexer = $this->pygments->getLexerFromFile('terminal.py', 'terminal');
 
                     return $this->pygments->highlight($code, $lexer, 'html', $options);
+
+                case 'config':
+                    $code = $this->runBlockGamut($code);
+                    $id = 'config-'.md5($code);
+                    $navItems = [];
+
+                    foreach (explode(' ', $attrs) as $index => $configClassName) {
+                        $configNameTitle = ucfirst(strtolower(trim($configClassName, '. ')));
+                        $configId = $id.'-'.$index;
+                        $active = $index === 0 ? 'active' : '';
+                        $navItems[] = <<<NAVITEM
+<li class="nav-item">
+    <a class="nav-link {$active}" data-toggle="tab" href="#{$configId}" role="tab">
+        {$configNameTitle}
+    </a>
+</li>
+NAVITEM;
+                    }
+
+                    $navItemsHTML = '<ul class="nav nav-tabs" role="tablist">'.implode('', $navItems).'</ul>';
+                    $code = <<<HTML
+<div id="$id" class="config">
+    {$navItemsHTML}
+    <div class="tab-content">
+        {$code}
+    </div>
+</div>
+HTML;
+
+                    return $this->hashBlock($code);
             }
 
             return $this->pygments->highlight($code, $language, 'html', $options);

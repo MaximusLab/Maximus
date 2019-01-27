@@ -206,6 +206,8 @@ a.markdown-editor-uploader {
             [].forEach.call(document.querySelectorAll('.gp, .c1'), function (gp) {
                 gp.dataset.content = gp.textContent;
             });
+
+            updateConfigCodeBlocks();
         });
     });
 
@@ -351,6 +353,22 @@ a.markdown-editor-uploader {
         $input.replaceWith($input.clone(true));
 
         $('#article-background-image-preview').addClass('d-none');
+    }
+
+    function updateConfigCodeBlocks()
+    {
+        $('.code-block.config .config').each(function() {
+            var $node = $(this);
+            var id = $node.attr('id');
+
+            $node.find('.tab-content > div.code-block').each(function(i, elem) {
+                var $block = $(this);
+                var classes = 'tab-pane fade' + (i === 0 ? ' show active' : '');
+
+                $block.addClass(classes);
+                $block.attr('id', id + '-' + i.toString());
+            });
+        });
     }
 </script>
 {% endblock javascripts %}
