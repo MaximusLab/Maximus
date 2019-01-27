@@ -102,10 +102,7 @@ class Markdown extends MarkdownExtra
         $bq = preg_replace_callback('{(\s*<pre>.+?</pre>)}sx',
             array($this, '_doBlockQuotes_callback2'), $bq);
 
-        $attributes = 'class="h4 text-center font-italic"';
-        $hr = '<hr class="hr hr-gradient">';
-
-        return "\n" . $this->hashBlock("$hr<p $attributes><q>\n$bq\n</q></p>$hr") . "\n\n";
+        return "\n" . $this->hashBlock("<blockquote>\n$bq\n</blockquote>") . "\n\n";
     }
 
     /**
