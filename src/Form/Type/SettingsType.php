@@ -121,6 +121,13 @@ class SettingsType extends AbstractType
                     'help' => 'e.g., blogger@example.com',
                 ]
             )
+            ->add('excludeAssets', TextareaType::class,
+                [
+                    'label' => 'Assets that exclude for deleting',
+                    'required' => false,
+                    'help' => 'Use JSON format, e.g. ["/path/to/asset1", "/path/to/asset2"]',
+                ]
+            )
         ;
 
         $builder->get('themeVariables')->addModelTransformer(new CallbackTransformer(
@@ -166,6 +173,21 @@ class SettingsType extends AbstractType
                 );
 
                 return $displayValue;
+            }
+        ));
+
+        $builder->get('excludeAssets')->addModelTransformer(new CallbackTransformer(
+            function ($valueAsArray) {
+                $lines = [];
+
+                foreach ($valueAsArray as $path) {
+                    $lines[] = '  "'.$path.'"';
+                }
+
+                return "[\n".implode(",\n", $lines)."\n]";
+            },
+            function ($valueAsString) {
+                return json_decode($valueAsString, true);
             }
         ));
     }

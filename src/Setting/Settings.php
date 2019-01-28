@@ -137,6 +137,13 @@ class Settings
     private $gitAuthorEmail = '';
 
     /**
+     * Assets that exclude for deleting
+     *
+     * @var string[]
+     */
+    private $excludeAssets = [];
+
+    /**
      * Settings constructor.
      *
      * @param array $settings
@@ -471,6 +478,26 @@ class Settings
     public function setGitAuthorEmail($gitAuthorEmail)
     {
         $this->gitAuthorEmail = $gitAuthorEmail;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getExcludeAssets()
+    {
+        return $this->excludeAssets;
+    }
+
+    /**
+     * @param string[] $excludeAssets
+     *
+     * @return Settings
+     */
+    public function setExcludeAssets(array $excludeAssets = [])
+    {
+        $this->excludeAssets = $excludeAssets;
 
         return $this;
     }
