@@ -47,9 +47,13 @@ $deployButton.on('click', function () {
         parameters = response;
         $.post(parameters.prepareGitRepoUrl, function(response) {
             if (response.success) {
-                $.post(parameters.copyAssetUrl, function(response) {
+                $.post(parameters.deleteAssetUrl, function(response) {
                     if (response.success) {
-                        generateHtmlFiles();
+                        $.post(parameters.copyAssetUrl, function(response) {
+                            if (response.success) {
+                                generateHtmlFiles();
+                            }
+                        });
                     }
                 });
             }

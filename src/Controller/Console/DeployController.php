@@ -16,6 +16,8 @@ use Maximus\Entity\Tag;
 use Maximus\Setting\Settings;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +44,7 @@ class DeployController extends AbstractController
                 $this->getAllArticleUrls(),
                 $this->getAllTagUrls()
             ),
+            'deleteAssetUrl' => $this->generateUrl('console_deploy_delete_assets'),
             'copyAssetUrl' => $this->generateUrl('console_deploy_copy_assets'),
             'generateFileUrl' => $this->generateUrl('console_deploy_generate_file'),
             'prepareGitRepoUrl' => $this->generateUrl('console_deploy_prepare_git_repository'),
@@ -75,6 +78,70 @@ class DeployController extends AbstractController
 
         $git->fetch('origin', 'master');
         $git->checkout('master');
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    /**
+     * Delete assets that never exists
+     *
+     * @Route("/delete-assets", name="delete_assets", methods={"POST"})
+     *
+     * @param Settings $settings
+     *
+     * @return JsonResponse
+     */
+    public function deleteAssets(Settings $settings)
+    {
+        /** @var SplFileInfo $file */
+        $oldAssets = [];
+        $newAssets = [];
+        $excludes = $settings->getExcludeAssets();
+        $deleteAssets = [];
+        $git = $this->getGit($settings);
+
+        foreach ((new Finder())->files()->in($this->getDeployDir()) as $file) {
+            $path = $file->getRelativePathname();
+            $path = str_replace('\\', '/', $path);
+            $path = '/'.ltrim($path, '/ ');
+            $oldAssets[] = $path;
+        }
+
+        foreach ($this->getDeployAssetDirs($settings) as $dir) {
+            if (is_dir($dir['source'])) {
+                foreach ((new Finder())->ignoreUnreadableDirs()->files()->in($dir['source']) as $file) {
+                    $path = rtrim($dir['prefix'], '/ ').'/'.$file->getRelativePathname();
+                    $path = str_replace('\\', '/', $path);
+                    $path = '/'.ltrim($path, '/ ');
+                    $newAssets[] = $path;
+                }
+            }
+        }
+
+        foreach (array_merge(
+            $this->getAllMenuUrls($settings),
+            $this->getAllArticleUrls(),
+            $this->getAllTagUrls()
+        ) as $url) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $path = rtrim($path, '/ ').'/index.html';
+            $newAssets[] = $path;
+        }
+
+        foreach (array_diff($oldAssets, $newAssets) as $path) {
+            if (!in_array($path, $excludes)) {
+                $deleteAssets[] = $path;
+            }
+        }
+
+        if (!empty($deleteAssets)) {
+            foreach ($deleteAssets as $path) {
+                $git->rm(substr($path, 1), ['cached' => true]);
+                unlink($this->getDeployDir().$path);
+            }
+
+            $git->commit('Delete files at ' . date('Y-m-d H:i:s'));
+        }
 
         return new JsonResponse(['success' => true]);
     }

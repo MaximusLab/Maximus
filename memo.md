@@ -25,5 +25,4 @@ npm run dev
 
 ## TODO List
 
-- Delete unpublished articles, tags, and assets
 - Delete unused media files after save an article
