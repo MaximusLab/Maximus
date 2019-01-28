@@ -90,23 +90,12 @@ class DeployController extends AbstractController
      */
     public function copyAssets(Settings $settings)
     {
-        $themeDir = $this->getParameter('kernel.project_dir').'/themes_installed/'.$settings->getTheme().'/public';
-        $deployThemeDir = $this->getDeployDir().'/theme/'.$settings->getTheme();
-        $uploadDir = $this->getParameter('kernel.project_dir').'/public/upload';
-        $deployUploadDir = $this->getDeployDir().'/upload';
-        $assetsDir = $this->getParameter('kernel.project_dir').'/public/assets';
-        $deployAssetsDir = $this->getDeployDir().'/assets';
-
         $fs = new Filesystem();
 
-        if (is_dir($themeDir)) {
-            $fs->mirror($themeDir, $deployThemeDir);
-        }
-        if (is_dir($uploadDir)) {
-            $fs->mirror($uploadDir, $deployUploadDir);
-        }
-        if (is_dir($assetsDir)) {
-            $fs->mirror($assetsDir, $deployAssetsDir);
+        foreach ($this->getDeployAssetDirs($settings) as $dir) {
+            if (is_dir($dir['source'])) {
+                $fs->mirror($dir['source'], $this->getDeployDir().$dir['prefix']);
+            }
         }
 
         return new JsonResponse(['success' => true]);
@@ -257,6 +246,27 @@ class DeployController extends AbstractController
         }
 
         return $path;
+    }
+
+    /**
+     * Get asset deploy directory pairs
+     *
+     * @param Settings $settings
+     *
+     * @return array
+     */
+    private function getDeployAssetDirs(Settings $settings)
+    {
+        $themeDir = $this->getParameter('kernel.project_dir').'/themes_installed/'.$settings->getTheme().'/public';
+        $themeDir = readlink($themeDir);
+        $uploadDir = $this->getParameter('kernel.project_dir').'/public/upload';
+        $assetsDir = $this->getParameter('kernel.project_dir').'/public/assets';
+
+        return [
+            ['source' => $themeDir, 'prefix' => '/theme/'.$settings->getTheme()],
+            ['source' => $uploadDir, 'prefix' => '/upload'],
+            ['source' => $assetsDir, 'prefix' => '/assets'],
+        ];
     }
 
     /**
