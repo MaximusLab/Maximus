@@ -141,7 +141,6 @@ class SettingsType extends AbstractType
 
         $builder->get('themeMenus')->addModelTransformer(new CallbackTransformer(
             function ($valueAsArray) {
-                $return = "[\n";
                 $lines = [];
 
                 foreach ($valueAsArray as $menu) {
@@ -152,7 +151,7 @@ class SettingsType extends AbstractType
                     $lines[] = '  '.$line;
                 }
 
-                return $return.implode(",\n", $lines)."\n]";
+                return "[\n".implode(",\n", $lines)."\n]";
             },
             function ($valueAsString) {
                 return json_decode($valueAsString, true);
