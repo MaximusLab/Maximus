@@ -11,7 +11,9 @@
 namespace Maximus\Controller;
 
 use Maximus\Entity\Article;
+use Maximus\Routing\Generator\ArticleUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ArticleController extends AbstractController
 {
@@ -23,7 +25,7 @@ class ArticleController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction($year, $month, $day, $alias)
+    public function article($year, $month, $day, $alias)
     {
         $article = $this->getDoctrine()->getRepository(Article::class)
             ->findOneBy(['alias' => $alias]);
@@ -32,12 +34,42 @@ class ArticleController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
+        return $this->renderArticle($article);
+    }
+
+    /**
+     * @Route("/doc/{path}", name="doc-article", requirements={"path"=".+"})
+     *
+     * @param string $path
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function doc($path)
+    {
+        if ('.html' === substr($path, -5)) {
+            $path = substr($path, 0, -5);
+        }
+
+        $path = '/'.ltrim($path, '/ ');
+        $article = $this->getDoctrine()->getRepository(Article::class)
+            ->findOneBy(['docUrl' => $path]);
+
+        if (!$article instanceof Article) {
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->renderArticle($article);
+    }
+
+    /**
+     * @param Article $article
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function renderArticle(Article $article)
+    {
         $viewData = [
             'article' => $article,
-            'alias' => $alias,
-            'year' => $article->getPublishedYear(),
-            'month' => $article->getPublishedMonth(),
-            'day' => $article->getPublishedDay(),
         ];
 
         return $this->render('@theme/article.html.twig', $viewData);

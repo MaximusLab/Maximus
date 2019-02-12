@@ -62,6 +62,16 @@ services:
         arguments:
             - '@Maximus\Setting\Settings'
 
+    Maximus\Routing\Generator\ArticleUrlGenerator:
+        class: Maximus\Routing\Generator\ArticleUrlGenerator
+        arguments:
+            - '@router'
+
+    Maximus\Twig\Extension\ArticleUrlGeneratorExtension:
+        class: Maximus\Twig\Extension\ArticleUrlGeneratorExtension
+        arguments:
+            - '@Maximus\Routing\Generator\ArticleUrlGenerator'
+
     Maximus\Twig\Extension\BreadcrumbExtension:
         class: Maximus\Twig\Extension\BreadcrumbExtension
 

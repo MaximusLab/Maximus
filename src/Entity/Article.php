@@ -17,7 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Article data
  *
- * @ORM\Table(name="articles")
+ * @ORM\Table(
+ *     name="articles",
+ *     indexes={
+ *         @ORM\Index(name="idx_alias", columns={"alias"}),
+ *         @ORM\Index(name="idx_doc_url", columns={"doc_url"}),
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="Maximus\Repository\ArticleRepository")
  */
 class Article
@@ -50,9 +56,18 @@ class Article
      *
      * @var string
      *
-     * @ORM\Column(name="alias", type="string", length=128, unique=true, options={"comment":"Article alias name, use alias to create article URL"})
+     * @ORM\Column(name="alias", type="string", length=128, options={"comment":"Article alias name, use alias to create article URL"})
      */
     private $alias;
+
+    /**
+     * The url path of document article
+     *
+     * @var string
+     *
+     * @ORM\Column(name="doc_url", type="string", length=128, options={"comment":"The url path of document articles"})
+     */
+    private $docUrl;
 
     /**
      * Article background image path
@@ -176,9 +191,29 @@ class Article
      */
     public function setAlias($alias)
     {
-        $alias = preg_replace('/[^a-zA-Z0-9-]/u', '-', $alias);
+        $alias = preg_replace('/[^a-z0-9-]/u', '-', $alias);
 
         $this->alias = $alias;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDocUrl()
+    {
+        return $this->docUrl;
+    }
+
+    /**
+     * @param string $docUrl
+     *
+     * @return Article
+     */
+    public function setDocUrl($docUrl)
+    {
+        $this->docUrl = $docUrl;
 
         return $this;
     }
@@ -410,7 +445,7 @@ class Article
     /**
      * @return array
      */
-    public function getLiveViewUrlParams()
+    public function getRouteParams()
     {
         return [
             'year' => $this->getPublishedYear(),

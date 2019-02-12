@@ -45,6 +45,7 @@ class ArticleController extends AbstractController
     /**
      * @Route("/article/create", name="article_create")
      * @Route("/article/edit/{id}", name="article_edit", requirements={"id": "\d+"}, defaults={"id": 0})
+     * @Route("/article/save/{id}", name="article_save", requirements={"id": "\d+"}, defaults={"id": 0}, methods={"POST"})
      *
      * @param Request $request
      * @param int $id Author ID
@@ -82,6 +83,7 @@ class ArticleController extends AbstractController
         $viewData = [
             'action' => $action,
             'form' => $form->createView(),
+            'formUrl' => $this->generateUrl('console_article_save', 0 === $id ? [] : ['id' => $id]),
             'article' => $article,
         ];
 

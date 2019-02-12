@@ -64,9 +64,10 @@ a.markdown-editor-uploader {
 {% endblock breadcrumb %}
 
 {% block body %}
-    {{ form_start(form) }}
+    {{ form_start(form, {'action': formUrl}) }}
         {{ form_row(form.title) }}
         {{ form_row(form.alias) }}
+        {{ form_row(form.docUrl) }}
         {{ form_row(form.tags) }}
         {{ form_row(form.author) }}
         {{ form_row(form.published) }}
@@ -92,7 +93,7 @@ a.markdown-editor-uploader {
                             </li>
                             {% if article.id is not empty %}
                             <li class="nav-item">
-                                <a href="{{ path('article', article.liveViewUrlParams) }}" class="nav-link link-black" target="_blank">
+                                <a href="{{ article_path(article) }}" class="nav-link link-black" target="_blank">
                                     Live View
                                 </a>
                             </li>
@@ -151,21 +152,21 @@ a.markdown-editor-uploader {
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2">Published At</div>
+            <div class="col-form-label col-sm-2">Published At</div>
             <div class="col-sm-10">
             {% if article.publishedAt is empty %}
-                <span class="text-danger">Draft</span>
+                <span class="text-danger form-control-plaintext">Draft</span>
             {% else %}
-                {{ article.publishedAt.format('Y-m-d H:i:s') }}
+                {{ form_widget(form.publishedAt) }}
             {% endif %}
             </div>
         </div>
 
         {% if article.createdAt is not empty %}
         <div class="form-group row">
-            <div class="col-sm-2">Created At</div>
+            <div class="col-form-label col-sm-2">Created At</div>
             <div class="col-sm-10">
-                {{ article.createdAt.format('Y-m-d H:i:s') }}
+                <span class="form-control-plaintext">{{ article.createdAt.format('Y/m/d H:i:s') }}</span>
             </div>
         </div>
         {% endif %}

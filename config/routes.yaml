@@ -8,7 +8,7 @@ custom_page:
 
 article:
     path: /{year}/{month}/{day}/{alias}
-    controller: Maximus\Controller\ArticleController::indexAction
+    controller: Maximus\Controller\ArticleController::article
     requirements:
         year: '\d{4}'
         month: '\d{2}'
