@@ -113,7 +113,11 @@ a.markdown-editor-uploader {
                                 <div class="float-right">
                                     <a href="javascript:void(0);" id="markdown-editor-uploader"
                                        data-upload-url="{{ path('console_media_upload') }}"
-                                       data-upload-dir="{{ constant('Maximus\\Entity\\Article::MEDIA_UPLOAD_PATH') }}"
+                                       data-upload-dir="{{
+                                           article.id is not empty ?
+                                               constant('Maximus\\Entity\\Article::MEDIA_UPLOAD_PATH') :
+                                               constant('Maximus\\Entity\\Article::TEMP_UPLOAD_PATH')
+                                       }}"
                                     >
                                         <i class="fas fa-file-upload"></i>
                                         Upload a file
@@ -144,7 +148,7 @@ a.markdown-editor-uploader {
                 </div>
                 <div class="text-right pt-1">
                     <button type="button" class="btn btn-outline-danger" id="delete-background-image-button"
-                            data-article-id="{{ article.id }}" data-api-url="{{ path('console_media_delete_article_background_image', {id: article.id}) }}">
+                            data-api-url="{{ article.id is empty ? '' : path('console_media_delete_article_background_image', {id: article.id}) }}">
                         <small>Delete Background Image</small>
                     </button>
                 </div>
@@ -174,12 +178,15 @@ a.markdown-editor-uploader {
         <div class="pt-3">
             <button class="btn btn-primary btn-block">Submit</button>
         </div>
+
+        <input type="hidden" id="article-id" value="{{ article.id }}" />
     {{ form_end(form) }}
 {% endblock body %}
 
 {% block javascripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script type="text/javascript">
+    var articleId = $('#article-id').val();
     var $articleMarkdownContent = $('#article_markdownContent');
 
     $('#article_tags').select2({
@@ -233,10 +240,10 @@ a.markdown-editor-uploader {
             return;
         }
 
-        if (confirm('Do you want to delete the uploaded background image?')) {
-            var $button = $(this);
-            var articleId = $.trim($button.data('article-id'));
+        var $button = $(this);
+        var apiUrl = $button.data('api-url');
 
+        if (apiUrl !== '' && confirm('Do you want to delete the uploaded background image?')) {
             if (!articleId.match(/^[0-9]+$/) || articleId <= 0) {
                 return;
             }
@@ -313,14 +320,19 @@ a.markdown-editor-uploader {
      */
     function uploadToArticleMarkdownContent(files, callback)
     {
-        var uploadUrl = $('#markdown-editor-uploader').data('upload-url');
-        var uploadDir = $('#markdown-editor-uploader').data('upload-dir');
+        var $uploader = $('#markdown-editor-uploader');
+        var uploadUrl = $uploader.data('upload-url');
+        var uploadDir = $uploader.data('upload-dir');
         var data = new FormData();
 
         for (var i = 0, len = files.length; i < len; ++i) {
             data.append('files[]', files[i]);
         }
         data.append('dir', uploadDir);
+
+        if (articleId > 0) {
+            data.append('article', articleId);
+        }
 
         $.ajax({
             url: uploadUrl,

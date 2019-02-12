@@ -12,6 +12,7 @@ namespace Maximus\Controller\Console;
 
 use Maximus\Entity\Article;
 use Maximus\Service\FileUploader;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -38,6 +39,7 @@ class MediaController extends AbstractController
     public function uploadAction(Request $request, FileUploader $uploader)
     {
         $form = $this->container->get('form.factory')->createNamedBuilder('', FormType::class)
+            ->add('article', EntityType::class, ['class' => Article::class, 'required' => false])
             ->add('files', FileType::class, ['multiple' => true])
             ->add('dir', TextType::class)
             ->getForm()
@@ -48,9 +50,14 @@ class MediaController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $urls = [];
+            $dir = $data['dir'];
+
+            if ($data['article'] instanceof Article) {
+                $dir = rtrim($data['dir'], '/ ').'/'.$data['article']->getId();
+            }
 
             foreach ($data['files'] as $file) {
-                $urls[] = $uploader->upload($file, $data['dir']);
+                $urls[] = $uploader->upload($file, $dir);
             }
 
             return new JsonResponse(['success' => true, 'data' => ['urls' => $urls]]);

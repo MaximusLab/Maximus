@@ -109,8 +109,14 @@ class DeployController extends AbstractController
 
         foreach ($this->getDeployAssetDirs($settings) as $dir) {
             if (is_dir($dir['source'])) {
-                foreach ((new Finder())->ignoreUnreadableDirs()->files()->in($dir['source']) as $file) {
-                    $path = rtrim($dir['prefix'], '/ ').'/'.$file->getRelativePathname();
+                $files = (new Finder())->ignoreUnreadableDirs()->files()->in($dir['source']);
+
+                if (!empty($dir['exclude'])) {
+                    $files->exclude($dir['exclude']);
+                }
+
+                foreach ($files as $file) {
+                    $path = rtrim($dir['target'], '/ ').'/'.$file->getRelativePathname();
                     $path = str_replace('\\', '/', $path);
                     $path = '/'.ltrim($path, '/ ');
                     $newAssets[] = $path;
@@ -161,7 +167,7 @@ class DeployController extends AbstractController
 
         foreach ($this->getDeployAssetDirs($settings) as $dir) {
             if (is_dir($dir['source'])) {
-                $fs->mirror($dir['source'], $this->getDeployDir().$dir['prefix']);
+                $fs->mirror($dir['source'], $this->getDeployDir().$dir['target']);
             }
         }
 
@@ -324,15 +330,17 @@ class DeployController extends AbstractController
      */
     private function getDeployAssetDirs(Settings $settings)
     {
-        $themeDir = $this->getParameter('kernel.project_dir').'/themes_installed/'.$settings->getTheme().'/public';
-        $themeDir = readlink($themeDir);
-        $uploadDir = $this->getParameter('kernel.project_dir').'/public/upload';
-        $assetsDir = $this->getParameter('kernel.project_dir').'/public/assets';
+        $projectDir = $this->getParameter('kernel.project_dir');
+        $themeDir = $projectDir.'/themes_installed/'.$settings->getTheme().'/public';
+        $bgUploadDir = $projectDir.'/public/upload'.Article::BACKGROUND_IMAGE_UPLOAD_PATH;
+        $mediaUploadDir = $projectDir.'/public/upload'.Article::MEDIA_UPLOAD_PATH;
+        $assetsDir = $projectDir.'/public/assets';
 
         return [
-            ['source' => $themeDir, 'prefix' => '/theme/'.$settings->getTheme()],
-            ['source' => $uploadDir, 'prefix' => '/upload'],
-            ['source' => $assetsDir, 'prefix' => '/assets'],
+            ['source' => $themeDir, 'target' => '/theme/'.$settings->getTheme(), 'exclude' => []],
+            ['source' => $bgUploadDir, 'target' => '/upload'.Article::BACKGROUND_IMAGE_UPLOAD_PATH, 'exclude' => []],
+            ['source' => $mediaUploadDir, 'target' => '/upload'.Article::MEDIA_UPLOAD_PATH, 'exclude' => []],
+            ['source' => $assetsDir, 'target' => '/assets', 'exclude' => []],
         ];
     }
 
