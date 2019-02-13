@@ -30,6 +30,13 @@ class Article
 {
     const MEDIA_UPLOAD_PATH = '/article/media';
     const BACKGROUND_IMAGE_UPLOAD_PATH = '/article/background';
+    const TEMP_UPLOAD_PATH = '/temp';
+    const FILE_INPUT_ATTR_ACCEPT = '.jpg,.jpeg,.png,.gif';
+    const VALID_UPLOAD_MIME_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+    ];
 
     /**
      * Article ID

@@ -120,9 +120,9 @@ a.markdown-editor-uploader {
                                        }}"
                                     >
                                         <i class="fas fa-file-upload"></i>
-                                        Upload a file
+                                        Upload an image
                                     </a>
-                                    <input type="file" accept=".jpg,.jpeg,.png" class="d-none" id="markdown-editor-uploader-file-dialog" />
+                                    <input type="file" accept="{{ constant('Maximus\\Entity\\Article::FILE_INPUT_ATTR_ACCEPT') }}" class="d-none" id="markdown-editor-uploader-file-dialog" />
                                 </div>
                             </div>
                         </div>
@@ -342,6 +342,11 @@ a.markdown-editor-uploader {
             contentType: false,
             processData: false,
             success: function(response) {
+                if (!response.success) {
+                    alert(response.error.message);
+                    return;
+                }
+
                 for (var i = 0, len = response.data.urls.length; i < len; ++i) {
                     var url = response.data.urls[i];
                     var newText = '![uploaded image]('+url+')';
@@ -350,7 +355,9 @@ a.markdown-editor-uploader {
                     insertNewTextToTextArea(textarea, newText);
                 }
 
-                callback();
+                if (typeof callback === 'function') {
+                    callback();
+                }
             }
         });
     }

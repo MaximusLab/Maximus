@@ -24,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class ArticleType
@@ -50,7 +51,20 @@ class ArticleType extends AbstractType
             ->add('author', EntityType::class, ['label' => 'Author', 'choice_label' => 'name', 'class' => Author::class, 'placeholder' => 'Choose an author name'])
             ->add('published', ChoiceType::class, ['label' => 'Published', 'choices' => ['Draft' => 0, 'Published' => 1]])
             ->add('markdownContent', TextareaType::class, ['label' => 'Content', 'attr' => ['placeholder' => 'Write a content or drag your files here...']])
-            ->add('backgroundImagePath', FileType::class, ['label' => 'Background', 'required' => false, 'attr' => ['accept' => '.jpg,.jpeg,.png'], 'data_class' => null])
+            ->add('backgroundImagePath', FileType::class, [
+                'label' => 'Background',
+                'required' => false,
+                'attr' => [
+                    'accept' => Article::FILE_INPUT_ATTR_ACCEPT,
+                ],
+                'data_class' => null,
+                'constraints' => [
+                    new Assert\File([
+                        'mimeTypes' => Article::VALID_UPLOAD_MIME_TYPES,
+                        'mimeTypesMessage' => 'Please upload a valid image',
+                    ]),
+                ],
+            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {

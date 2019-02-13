@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Route("/console/media", name="console_media_")
@@ -40,7 +41,17 @@ class MediaController extends AbstractController
     {
         $form = $this->container->get('form.factory')->createNamedBuilder('', FormType::class)
             ->add('article', EntityType::class, ['class' => Article::class, 'required' => false])
-            ->add('files', FileType::class, ['multiple' => true])
+            ->add('files', FileType::class, [
+                'multiple' => true,
+                'constraints' => [
+                    new Assert\All([
+                        new Assert\File([
+                            'mimeTypes' => Article::VALID_UPLOAD_MIME_TYPES,
+                            'mimeTypesMessage' => 'Please upload a valid image',
+                        ]),
+                    ]),
+                ],
+            ])
             ->add('dir', TextType::class)
             ->getForm()
         ;
