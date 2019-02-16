@@ -125,7 +125,13 @@ class DeployController extends AbstractController
             }
         }
 
-        $newAssets += $this->getAllArticleUrls();
+        foreach ($this->getAllArticleUrls() as $url) {
+            if ('.md' === substr($url, -3)) {
+                $newAssets[] = $url.'.txt';
+            } else {
+                $newAssets[] = $url;
+            }
+        }
 
         foreach (array_merge($this->getAllMenuUrls($settings), $this->getAllTagUrls()) as $url) {
             $path = parse_url($url, PHP_URL_PATH);
@@ -193,7 +199,7 @@ class DeployController extends AbstractController
         if ('.html' === substr($url, -5)) {
             $url = substr($url, 0, -5);
         } elseif ('.md' === substr($url, -3)) {
-            $format = 'md';
+            $format = 'md.txt';
             $url = substr($url, 0, -3);
         }
 
