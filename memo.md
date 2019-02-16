@@ -22,7 +22,3 @@ composer require cpliakas/git-wrapper
 # Run encore dev
 npm run dev
 ```
-
-## TODO List
-
-- Delete unused media files after save an article
