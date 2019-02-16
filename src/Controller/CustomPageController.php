@@ -25,7 +25,7 @@ class CustomPageController extends AbstractController
         ];
 
         try {
-            $return = $this->render('@theme/pages/' . $viewName . '.html.twig', $viewData);
+            $return = $this->render('@theme/pages/'.$viewName.'.html.twig', $viewData);
         } catch (\Exception $e) {
         }
 
