@@ -37,7 +37,8 @@ class FileUploader
 
     /**
      * @param File $file
-     * @param string $dir
+     * @param string $dir The directory path related to upload root directory
+     *                    (e.g. /file/dir is related to /upload/file/dir, '/upload' is upload root directory)
      *
      * @return string File link url
      */

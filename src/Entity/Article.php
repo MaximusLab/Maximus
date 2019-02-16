@@ -28,8 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Article
 {
-    const MEDIA_UPLOAD_PATH = '/article/media';
-    const BACKGROUND_IMAGE_UPLOAD_PATH = '/article/background';
+    const ARTICLE_UPLOAD_PATH = '/article';
     const TEMP_UPLOAD_PATH = '/temp';
     const FILE_INPUT_ATTR_ACCEPT = '.jpg,.jpeg,.png,.gif';
     const VALID_UPLOAD_MIME_TYPES = [
@@ -63,7 +62,7 @@ class Article
      *
      * @var string
      *
-     * @ORM\Column(name="alias", type="string", length=128, options={"comment":"Article alias name, use alias to create article URL"})
+     * @ORM\Column(name="alias", type="string", length=128, nullable=true, options={"comment":"Article alias name, use alias to create article URL"})
      */
     private $alias;
 
@@ -72,7 +71,7 @@ class Article
      *
      * @var string
      *
-     * @ORM\Column(name="doc_url", type="string", length=128, options={"comment":"The url path of document articles"})
+     * @ORM\Column(name="doc_url", type="string", length=128, nullable=true, options={"comment":"The url path of document articles"})
      */
     private $docUrl;
 
@@ -460,5 +459,17 @@ class Article
             'day' => $this->getPublishedDay(),
             'alias' => $this->getAlias(),
         ];
+    }
+
+    /**
+     * Get valid uploaded images in Markdown contents
+     *
+     * @return array
+     */
+    public function getValidImagesInContent()
+    {
+        preg_match_all('/(?:!\[(.*?)\]\((.*?)\))/', $this->getMarkdownContent(), $matches);
+
+        return empty($matches[2]) ? [] : $matches[2];
     }
 }

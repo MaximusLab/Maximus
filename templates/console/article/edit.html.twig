@@ -115,7 +115,7 @@ a.markdown-editor-uploader {
                                        data-upload-url="{{ path('console_media_upload') }}"
                                        data-upload-dir="{{
                                            article.id is not empty ?
-                                               constant('Maximus\\Entity\\Article::MEDIA_UPLOAD_PATH') :
+                                               constant('Maximus\\Entity\\Article::ARTICLE_UPLOAD_PATH') ~ '/' ~ article.id :
                                                constant('Maximus\\Entity\\Article::TEMP_UPLOAD_PATH')
                                        }}"
                                     >
@@ -329,10 +329,6 @@ a.markdown-editor-uploader {
             data.append('files[]', files[i]);
         }
         data.append('dir', uploadDir);
-
-        if (articleId > 0) {
-            data.append('article', articleId);
-        }
 
         $.ajax({
             url: uploadUrl,

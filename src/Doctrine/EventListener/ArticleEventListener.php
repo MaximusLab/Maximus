@@ -55,6 +55,7 @@ class ArticleEventListener
 
         if ($object instanceof Article) {
             $this->prepareArticle($object);
+            $this->uploadBackgroundImage($object);
         }
     }
 
@@ -74,6 +75,7 @@ class ArticleEventListener
             }
 
             $this->prepareArticle($object);
+            $this->uploadBackgroundImage($object);
         }
     }
 
@@ -82,6 +84,9 @@ class ArticleEventListener
      */
     private function prepareArticle(Article $article)
     {
+        if (!empty($article->getDocUrl())) {
+            $article->setDocUrl('/' . trim($article->getDocUrl(), '/ .'));
+        }
         $article->setHtmlContent($this->markdown->transform(trim($article->getMarkdownContent())));
 
         if (empty($article->getId())) {
@@ -90,8 +95,6 @@ class ArticleEventListener
         if ($article->getPublished() && empty($article->getPublishedAt())) {
             $article->setPublishedAt(new \DateTime());
         }
-
-        $this->uploadBackgroundImage($article);
     }
 
     /**
@@ -106,7 +109,12 @@ class ArticleEventListener
         }
 
         if ($file instanceof File) {
-            $dir = Article::BACKGROUND_IMAGE_UPLOAD_PATH.'/'.$article->getId();
+            if (!empty($article->getId())) {
+                $dir = Article::ARTICLE_UPLOAD_PATH . '/' . $article->getId();
+            } else {
+                $dir = Article::TEMP_UPLOAD_PATH;
+            }
+
             $imagePath = $this->uploader->upload($file, $dir);
 
             $article->setBackgroundImagePath($imagePath);

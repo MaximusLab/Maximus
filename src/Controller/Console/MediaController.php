@@ -12,6 +12,7 @@ namespace Maximus\Controller\Console;
 
 use Maximus\Entity\Article;
 use Maximus\Service\FileUploader;
+use Maximus\Setting\Settings;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -40,7 +41,6 @@ class MediaController extends AbstractController
     public function uploadAction(Request $request, FileUploader $uploader)
     {
         $form = $this->container->get('form.factory')->createNamedBuilder('', FormType::class)
-            ->add('article', EntityType::class, ['class' => Article::class, 'required' => false])
             ->add('files', FileType::class, [
                 'multiple' => true,
                 'constraints' => [
@@ -63,10 +63,6 @@ class MediaController extends AbstractController
             $urls = [];
             $dir = $data['dir'];
 
-            if ($data['article'] instanceof Article) {
-                $dir = rtrim($data['dir'], '/ ').'/'.$data['article']->getId();
-            }
-
             foreach ($data['files'] as $file) {
                 $urls[] = $uploader->upload($file, $dir);
             }
@@ -81,16 +77,17 @@ class MediaController extends AbstractController
      * Delete uploaded article background image
      *
      * @param Article $article
+     * @param Settings $settings
      *
      * @return JsonResponse
      *
      * @Route("/delete-article-background-image/{id}", name="delete_article_background_image",
      *     requirements={"id": "\d+"}, methods={"POST"})
      */
-    public function deleteArticleBackgroundImage(Article $article)
+    public function deleteArticleBackgroundImage(Article $article, Settings $settings)
     {
         $em = $this->getDoctrine()->getManager();
-        $filePath = $this->getParameter('kernel.project_dir').'/public/'.$article->getBackgroundImagePath();
+        $filePath = $settings->getWebRoot().$article->getBackgroundImagePath();
 
         $article->setBackgroundImagePath('');
 
