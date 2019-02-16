@@ -13,6 +13,7 @@ namespace Maximus\Controller\Console;
 use GitWrapper\GitWrapper;
 use Maximus\Entity\Article;
 use Maximus\Entity\Tag;
+use Maximus\Routing\Generator\ArticleUrlGenerator;
 use Maximus\Setting\Settings;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
@@ -124,11 +125,9 @@ class DeployController extends AbstractController
             }
         }
 
-        foreach (array_merge(
-            $this->getAllMenuUrls($settings),
-            $this->getAllArticleUrls(),
-            $this->getAllTagUrls()
-        ) as $url) {
+        $newAssets += $this->getAllArticleUrls();
+
+        foreach (array_merge($this->getAllMenuUrls($settings), $this->getAllTagUrls()) as $url) {
             $path = parse_url($url, PHP_URL_PATH);
             $path = rtrim($path, '/ ').'/index.html';
             $newAssets[] = $path;
@@ -186,17 +185,31 @@ class DeployController extends AbstractController
      */
     public function generateFile(Request $request, Settings $settings)
     {
+        $router = $this->get('router');
         $url = $request->request->get('url');
         $html = $request->request->get('html');
+        $format = 'html';
+
+        if ('.html' === substr($url, -5)) {
+            $url = substr($url, 0, -5);
+        } elseif ('.md' === substr($url, -3)) {
+            $format = 'md';
+            $url = substr($url, 0, -3);
+        }
+
         $dir = $this->getDeployDir().$this->generateOutputFilePath($settings->getUrlPrefix(), $url);
-        $filePath = $dir.'/index.html';
+        $route = $router->match($url);
+
+        if (!empty($route['_route']) && 'document' === $route['_route']) {
+            $filePath = $dir.'.'.$format;
+        } else {
+            $filePath = $dir.'/index.html';
+        }
 
         if (!file_exists($filePath) || md5_file($filePath) !== md5($html)) {
             $fs = new Filesystem();
 
-            $fs->mkdir($dir);
-
-            file_put_contents($filePath, $html);
+            $fs->dumpFile($filePath, $html);
         }
 
         return new JsonResponse(['success' => true]);
@@ -259,13 +272,13 @@ class DeployController extends AbstractController
     private function getAllArticleUrls()
     {
         $articleRepo = $this->getDoctrine()->getRepository(Article::class);
-        $articleRouteParameters = $articleRepo->getPublishedArticleRouteParameters();
+        $articles = $articleRepo->getPublishedArticles();
+        $articleUrlGenerator = $this->get(ArticleUrlGenerator::class);
         $urls = [];
 
-        foreach ($articleRouteParameters as $parameters) {
-            $url = $this->generateUrl('article', $parameters);
-
-            $urls[] = $url;
+        foreach ($articles as $article) {
+            $urls[] = $articleUrlGenerator->generate($article, 'html');
+            $urls[] = $articleUrlGenerator->generate($article, 'md');
         }
 
         return $urls;
@@ -332,14 +345,13 @@ class DeployController extends AbstractController
     {
         $projectDir = $this->getParameter('kernel.project_dir');
         $themeDir = $projectDir.'/themes_installed/'.$settings->getTheme().'/public';
-        $bgUploadDir = $projectDir.'/public/upload'.Article::BACKGROUND_IMAGE_UPLOAD_PATH;
-        $mediaUploadDir = $projectDir.'/public/upload'.Article::MEDIA_UPLOAD_PATH;
-        $assetsDir = $projectDir.'/public/assets';
+        $articleUploadPath = $settings->getUploadPath().Article::ARTICLE_UPLOAD_PATH;
+        $articleUploadDir = $settings->getWebRoot().$articleUploadPath;
+        $assetsDir = $settings->getWebRoot().'/assets';
 
         return [
             ['source' => $themeDir, 'target' => '/theme/'.$settings->getTheme(), 'exclude' => []],
-            ['source' => $bgUploadDir, 'target' => '/upload'.Article::BACKGROUND_IMAGE_UPLOAD_PATH, 'exclude' => []],
-            ['source' => $mediaUploadDir, 'target' => '/upload'.Article::MEDIA_UPLOAD_PATH, 'exclude' => []],
+            ['source' => $articleUploadDir, 'target' => $articleUploadPath, 'exclude' => []],
             ['source' => $assetsDir, 'target' => '/assets', 'exclude' => []],
         ];
     }
@@ -364,5 +376,12 @@ class DeployController extends AbstractController
         $gitWrapper->setPrivateKey($settings->getGitSSHPrivateKeyPath());
 
         return $gitWrapper->workingCopy($this->getDeployDir());
+    }
+
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ArticleUrlGenerator::class => '?'.ArticleUrlGenerator::class,
+        ]);
     }
 }

@@ -28,42 +28,6 @@ class ArticleRepository extends EntityRepository
     }
 
     /**
-     * @return array Return route parameters, For example:
-     *
-     * <code><pre>
-     * [
-     *     ['alias' => 'article-title-alias-1', 'year' => '2019', 'month' => '01', 'day' => '02'],
-     *     ['alias' => 'article-title-alias-2', 'year' => '2019', 'month' => '01', 'day' => '03'],
-     *     ...
-     * ]
-     * </pre></code>
-     */
-    public function getPublishedArticleRouteParameters()
-    {
-        $rows = $this->createQueryBuilder('article')
-            ->select(['article.alias', 'article.publishedAt'])
-            ->where('article.published = true')
-            ->orderBy('article.publishedAt', 'DESC')
-            ->getQuery()
-            ->getArrayResult()
-        ;
-        $parameters = [];
-
-        foreach ($rows as $row) {
-            /** @var \DateTime $publishedAt */
-            $publishedAt = $row['publishedAt'];
-            $parameters[] = [
-                'alias' => $row['alias'],
-                'year' => $publishedAt->format('Y'),
-                'month' => $publishedAt->format('m'),
-                'day' => $publishedAt->format('d'),
-            ];
-        }
-
-        return $parameters;
-    }
-
-    /**
      * @param string $alias
      *
      * @return Collection|Article[]
