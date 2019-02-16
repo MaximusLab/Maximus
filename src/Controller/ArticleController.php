@@ -11,7 +11,7 @@
 namespace Maximus\Controller;
 
 use Maximus\Entity\Article;
-use Maximus\Routing\Generator\ArticleUrlGenerator;
+use Maximus\HttpFoundation\Response\PlainTextResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,10 +22,11 @@ class ArticleController extends AbstractController
      * @param int    $month The month part of date when the article published
      * @param int    $day   The day part of date when the article published
      * @param string $alias The english title
+     * @param string $format The page format, include 'html', 'md' (for markdown contents), default is 'html'
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function article($year, $month, $day, $alias)
+    public function article($year, $month, $day, $alias, $format = 'html')
     {
         $article = $this->getDoctrine()->getRepository(Article::class)
             ->findOneBy(['alias' => $alias]);
@@ -34,28 +35,43 @@ class ArticleController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
+        if ('md' === $format) {
+            return new PlainTextResponse($article->getMarkdownContent());
+        }
+
         return $this->renderArticle($article);
     }
 
     /**
-     * @Route("/doc/{path}", name="doc-article", requirements={"path"=".+"})
+     * @Route("/doc/{path}", name="document", requirements={"path"=".+"})
      *
      * @param string $path
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function doc($path)
+    public function document($path)
     {
-        if ('.html' === substr($path, -5)) {
+        $format = 'html';
+
+        if ('.md' === substr($path, -3)) {
+            $format = 'md';
+            $path = substr($path, 0, -3);
+        } elseif ('.html' === substr($path, -5)) {
             $path = substr($path, 0, -5);
         }
 
-        $path = '/'.ltrim($path, '/ ');
+        $path = '/'.trim($path, '/ ');
+        $path = trim($path, '. ');
+
         $article = $this->getDoctrine()->getRepository(Article::class)
             ->findOneBy(['docUrl' => $path]);
 
         if (!$article instanceof Article) {
             return $this->redirectToRoute('homepage');
+        }
+
+        if ('md' === $format) {
+            return new PlainTextResponse($article->getMarkdownContent());
         }
 
         return $this->renderArticle($article);
