@@ -32,17 +32,22 @@ class ArticleUrlGenerator
 
     /**
      * @param Article $article
+     * @param string $format
      *
      * @return string
      */
-    public function generate(Article $article)
+    public function generate(Article $article, $format = '')
     {
         if (!empty($article->getDocUrl())) {
-            $path = ltrim($article->getDocUrl(), '/ ');
+            $url = trim($article->getDocUrl(), '/ ');
+            $suffix = '' === $format ? '.html' : '.'.$format;
+            $parameters = ['path' => $url.$suffix];
 
-            return $this->generator->generate('doc-article', ['path' => $path]).'.html';
+            return $this->generator->generate('document', $parameters);
         }
 
-        return $this->generator->generate('article', $article->getRouteParams());
+        $parameters = ['format' => $format] + $article->getRouteParams();
+
+        return $this->generator->generate('article', $parameters);
     }
 }

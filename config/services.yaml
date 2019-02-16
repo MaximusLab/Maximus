@@ -64,6 +64,7 @@ services:
 
     Maximus\Routing\Generator\ArticleUrlGenerator:
         class: Maximus\Routing\Generator\ArticleUrlGenerator
+        public: true
         arguments:
             - '@router'
 
