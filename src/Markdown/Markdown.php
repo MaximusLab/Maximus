@@ -184,6 +184,7 @@ ICON;
                 case 'config':
                     $code = $this->runBlockGamut($code);
                     $id = 'config-'.md5($code);
+                    $attrs = empty($attrs) ? '.annotation .yaml .xml .php' : $attrs;
                     $navItems = [];
 
                     foreach (explode(' ', $attrs) as $index => $configClassName) {
