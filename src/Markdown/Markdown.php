@@ -42,6 +42,45 @@ class Markdown extends MarkdownExtra
     /**
      * {@inheritdoc}
      */
+    protected function doFencedCodeBlocks($text)
+    {
+        $text = preg_replace_callback('{
+				(?:\n|\A)
+				# 1: Opening marker
+				(
+					(?:~{3,}|`{3,}|:{3,}) # 3 or more tildes/backticks.
+				)
+				[ ]*
+				(?:
+					\.?([-_:a-zA-Z0-9]+) # 2: standalone class name
+				)?
+				[ ]*
+				(?:
+					' . $this->id_class_attr_catch_re . ' # 3: Extra attributes
+				)?
+				[ ]* \n # Whitespace and newline following marker.
+
+				# 4: Content
+				(
+					(?>
+						(?!\1 [ ]* \n)	# Not a closing marker.
+						.*\n+
+					)+
+				)
+
+				# Closing marker.
+				\1 [ ]* (?= \n )
+			}xm',
+            [$this, '_doFencedCodeBlocks_callback'],
+            $text
+        );
+
+        return $text;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function _doFencedCodeBlocks_callback($matches)
     {
         $className =& $matches[2];
@@ -125,6 +164,7 @@ class Markdown extends MarkdownExtra
                 unset($options['linenos']);
             }
 
+            // TODO: add caution, version-added
             switch ($language) {
                 case 'note':
                     $code = $this->runBlockGamut($code);
