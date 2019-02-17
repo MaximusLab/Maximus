@@ -71,7 +71,7 @@ class ArticleType extends AbstractType
             $article = $event->getData();
             $form = $event->getForm();
 
-            if ($article instanceof Article && !empty($article->getId())) {
+            if ($article instanceof Article && !empty($article->getId()) && $article->getPublished()) {
                 $form->add('publishedAt', DateTimeType::class, ['label' => 'Published at', 'widget' => 'single_text', 'format' => 'Y/MM/dd HH:mm:ss']);
             }
         });
