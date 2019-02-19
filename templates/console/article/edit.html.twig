@@ -17,6 +17,7 @@ form[name=article] {
     padding-left: 1rem;
 }
 .markdown-editor {
+    background-color: white;
     border: 1px solid #ced4da;
     border-radius: .25rem;
     padding: 0.8em;
@@ -51,6 +52,14 @@ a.markdown-editor-uploader {
 .markdown-editor-highlight {
     border-width: 2px 3px 2px 2px;
     border-color: #007bff;
+}
+
+#article_html_content_preview_panel.full-screen {
+    overflow: auto;
+}
+#article_html_content_preview.full-screen {
+    margin: 0 auto;
+    width: 1140px;
 }
 </style>
 <link rel="stylesheet" href="{{ asset('console/css/font-awesome.min.css') }}">
@@ -101,6 +110,11 @@ a.markdown-editor-uploader {
                                 </a>
                             </li>
                             {% endif %}
+                            <li class="nav-item ml-auto">
+                                <a href="javascript:void(0);" class="nav-link link-black" id="full-screen-button">
+                                    <i class="fas fa-expand-arrows-alt"></i> FullScreen
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div class="tab-content">
@@ -191,6 +205,7 @@ a.markdown-editor-uploader {
 
 {% block javascripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/4.0.0/screenfull.js" integrity="sha256-D5SXfF5zV9c57rgxaAOo72Y8YgvouJDUic1RfSSpyww=" crossorigin="anonymous"></script>
 <script type="text/javascript">
     var articleId = $('#article-id').val();
     var $articleMarkdownContent = $('#article_markdownContent');
@@ -282,6 +297,37 @@ a.markdown-editor-uploader {
             $articleMarkdownContent.removeClass('markdown-editor-highlight');
         });
     });
+
+    if (screenfull.enabled) {
+        var $fullScreenButton = $('#full-screen-button');
+        var $htmlPreviewPanel = $('#article_html_content_preview_panel');
+        var $htmlPreview = $('#article_html_content_preview');
+        var $markdownEditor = $fullScreenButton.closest('.markdown-editor');
+
+        $fullScreenButton.click(function () {
+            screenfull.toggle($markdownEditor.get(0));
+        });
+        screenfull.on('change', function () {
+            if (screenfull.isFullscreen) {
+                setTimeout(function() {
+                    var h1 = $markdownEditor.height();
+                    var h2 = $markdownEditor.find('.nav-tabs-container').outerHeight();
+                    var h3 = $markdownEditor.find('.tab-content').outerHeight();
+                    var h4 = $articleMarkdownContent.height();
+
+                    $htmlPreviewPanel.addClass('full-screen');
+                    $htmlPreviewPanel.css('height', (h1 - h2 - 16)+'px');
+                    $htmlPreview.addClass('full-screen');
+                    $articleMarkdownContent.css('height', (h4 + h1 - h2 - h3)+'px');
+                }, 1000);
+            } else {
+                $htmlPreviewPanel.removeClass('full-screen');
+                $htmlPreviewPanel.css('height', 'auto');
+                $htmlPreview.removeClass('full-screen');
+                $articleMarkdownContent.css('height', 'auto');
+            }
+        });
+    }
 
     /**
      * @param {HTMLTextAreaElement} textarea
