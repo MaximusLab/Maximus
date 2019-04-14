@@ -12,11 +12,6 @@
 
 ###> maximus ###
 /config/packages/maximus.yaml
-/public/theme
-/public/upload
-/themes
-/public/assets
-/public/_deploy
 ###< maximus ###
 
 ###> symfony/webpack-encore-pack ###
