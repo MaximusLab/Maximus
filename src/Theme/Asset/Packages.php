@@ -21,7 +21,7 @@ class Packages extends BasePackages
     public function __construct(PackageInterface $defaultPackage = null, array $packages = array(), Settings $settings = null)
     {
         $packages['theme'] = new PathPackage(
-            'theme/'.$settings->getTheme(),
+            'themes/'.$settings->getTheme(),
             new ThemeVersionStrategy($settings)
         );
 
