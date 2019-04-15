@@ -7,6 +7,11 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 
+// -V option workaround
+if (in_array('-V', $argv)) {
+    die('Symfony version 3.4.0');
+}
+
 set_time_limit(0);
 
 require __DIR__.'/../vendor/autoload.php';
