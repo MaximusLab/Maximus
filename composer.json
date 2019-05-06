@@ -1,8 +1,8 @@
 {
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
-        "php": "^7.1.3",
+        "php": "^7.2.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -17,6 +17,7 @@
         "symfony/asset": "*",
         "symfony/console": "*",
         "symfony/debug": "*",
+        "symfony/dotenv": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
@@ -29,7 +30,6 @@
     "require-dev": {
         "composer/composer": "^1.7",
         "symfony/debug-bundle": "*",
-        "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.8",
         "symfony/profiler-pack": "^1.0",
         "symfony/var-dumper": "*",
