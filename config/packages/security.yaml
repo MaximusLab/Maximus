@@ -1,0 +1,37 @@
+security:
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        default_console_users:
+            memory:
+                users:
+                    admin: { password: '%env(ADMIN_PASSWORD)%', roles: ['ROLE_ADMIN'] }
+    encoders:
+        Symfony\Component\Security\Core\User\User:
+            algorithm: bcrypt
+            cost: 12
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        console:
+            pattern: ^/console
+            http_basic:
+                realm: Secured Area
+                provider: default_console_users
+        main:
+            anonymous: true
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/console, roles: ROLE_ADMIN }
