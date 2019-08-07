@@ -164,7 +164,6 @@ class Markdown extends MarkdownExtra
                 unset($options['linenos']);
             }
 
-            // TODO: add caution, version-added
             switch ($language) {
                 case 'note':
                     $code = $this->runBlockGamut($code);
@@ -208,6 +207,39 @@ ICON;
 </div>
 ICON;
                     $code = $title.$code;
+
+                    return $this->hashBlock($code);
+
+                case 'caution':
+                    $code = $this->runBlockGamut($code);
+                    $title = <<<ICON
+<div class="caution-title">
+    <span class="fa-stack fa-md">
+      <i class="fa fa-circle fa-stack-2x"></i>
+      <i class="fa fa-exclamation fa-stack-1x fa-inverse"></i>
+    </span>
+    <span class="text">Caution</span>
+</div>
+ICON;
+                    $code = $title.$code;
+
+                    return $this->hashBlock($code);
+
+                case 'version-added':
+                    $code = $this->runBlockGamut($code);
+                    $id = 'config-'.md5($code);
+                    $version = '???';
+
+                    if (preg_match('/\s?\.version-([0-9.]+)\s?/', $attrs, $matches)) {
+                        $version = $matches[1];
+                    }
+dump($code);
+                    $code = <<<HTML
+<div id="$id" class="version-added">
+    <span class="version-added-title">New in version {$version} : </span>
+    {$code}
+</div>
+HTML;
 
                     return $this->hashBlock($code);
 
