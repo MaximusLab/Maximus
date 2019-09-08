@@ -233,7 +233,7 @@ ICON;
                     if (preg_match('/\s?\.version-([0-9.]+)\s?/', $attrs, $matches)) {
                         $version = $matches[1];
                     }
-dump($code);
+
                     $code = <<<HTML
 <div id="$id" class="version-added">
     <span class="version-added-title">New in version {$version} : </span>
