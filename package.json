@@ -1,7 +1,7 @@
 {
     "dependencies": {
         "codemirror": "^5.42",
-        "jquery": "^3.4",
+        "jquery": "^3.5",
         "js-beautify": "^1.8"
     },
     "devDependencies": {
