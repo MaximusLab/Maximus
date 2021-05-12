@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "codemirror": "^5.42",
+        "codemirror": "^5.58",
         "jquery": "^3.4",
         "js-beautify": "^1.8"
     },
